@@ -1,0 +1,13 @@
+---
+1000: |
+  Lazy::Checker::CheckCase instanciation requires a Lazy::Checker::Url (first argument).
+  Actual value is %{a}::%{c}.
+1001: |
+  Lazy::Checker::CheckCase instanciation requires a Hash (second argument).
+  Actual value is %{a}::%{c}.
+1002: |
+  CheckCase data should define :tag value (tag name with at least id or css class).
+  They only define : %{ks}.
+1003: |
+  :tag value of the CheckCase data should define at least a id (tagName#id) or a css 
+  class (tagName.css_class). '%{a}' defines neither.

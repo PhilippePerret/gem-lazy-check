@@ -1,8 +1,6 @@
 # Lazy::Check
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lazy/check`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Ce gem permet de tester de façon paresseuse un site web.
 
 ## Installation
 
@@ -22,7 +20,35 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Utilisation simple :
+
+~~~ruby
+require "lazy-check"
+
+checker = Lazy::Checker.new("path/to/recipe.yaml")
+checker.check
+# => Produit le résultat
+~~~
+
+Si la recette se trouve là où le terminal se trouve, il suffit de faire :
+
+~~~ruby
+require "lazy-check"
+
+Lazy::Checker.new.check
+~~~
+
+La recette (`recipe.yaml`) définit les vérifications qu'il faut effectuer.
+
+~~~yaml
+---
+- name: "Existence du DIV#content avec du texte"
+  tag: 'div#content'
+  empty: false
+- name: "Existence du SPAN#range sans texte"
+  tag: 'span#range'
+  empty: true
+~~~
 
 ## Development
 

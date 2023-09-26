@@ -1,0 +1,21 @@
+---
+200: |
+  Le fichier recette '%{path}' est introuvable.
+201: |
+  La donnée %{a} n'est pas valide, pour instancier un Checker::Url. Il faudrait soit
+  une URL (conforme) soit un code HTML (valide).
+800: |
+  :url devrait être un string (une URL ou un code HTML). C'est un %{class}.
+1000: |
+  L'instanciation de Lazy::Checker::CheckCase nécessite un Lazy::Checker::Url
+  en premier argument. La valeur est %{a}::%{c}.
+1001: |
+  L'instanciation de Lazy::Checker::CheckCase nécessite un Hash en second
+  argument, une table définissant ce cas de test. La valeur est %{a}::%{c}…
+1002: |
+  Les données du CheckCase devraient définir :tag, la balise avec son
+  identifiant et ses classes CSS. Elles ne définissent que :
+  %{ks}.
+1003: |
+  La donnée :tag du check case devrait au moins définir un identifiant (tag#id)
+  ou une classe CSS (tag.css). '%{a}' ne définit ni l'un ni l'autre.

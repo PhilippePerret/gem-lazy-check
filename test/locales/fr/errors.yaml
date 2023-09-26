@@ -1,0 +1,14 @@
+---
+10: |
+  Le message d'erreur attendu n'est pas le bon.
+  Attendu : %{e}
+  Obtenu  : %{a}
+100: |
+  Le test devrait échouer.
+101: |
+  Le test devrait réussir.
+
+200: |
+  %{a} n'est pas une source valide. Il faut fournir soit une adresse internet,
+  donc une URL (avec ou non des arguments) soit un code HTML valide (donc qui
+  doit commencer par '<' et s'achever par '>'). Rien d'autre.

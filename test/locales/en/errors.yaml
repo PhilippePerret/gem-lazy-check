@@ -1,0 +1,14 @@
+---
+10: |
+  Error message is wrong.
+  Expected : %{e}
+  Actual  : %{a}
+100: |
+  Test should fail.
+101: |
+  Test should succeed.
+
+200: |
+  %{a} is not a valid source. Should be supplied a valid URL (starting with 'http' 
+  or 'https') with or without query string. Or a valid HTML code, i.e. starting
+  with '<' and ending with '>'. Nothing else.
