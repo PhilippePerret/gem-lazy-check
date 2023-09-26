@@ -19,11 +19,27 @@ class Lazy::CheckCaseTest < Minitest::Test
     Lazy::Checker::CheckCase.new(urler,data_case)
   end
 
-  def should_fail(check_case)
-    assert(check_case.check === false, TEST_ERRORS[100])
+  # Finalement, petit à petit, on vient à donner à cette
+  # méthode ultime le code de la page (check_case::String) et
+  # les données du Case.
+  # Mais à l'origine, elle ne recevait qu'un CheckCase
+  def should_fail(check_case, data_case = nil)
+    check_case = ensure_check_case(check_case, data_case)
+    assert(check_case.check === false, TEST_ERRORS[100] % {c: data_case.inspect})
   end
-  def should_succeed(check_case)
-    assert(check_case.check === true, TEST_ERRORS[101])
+  # @idem que la précédente
+  def should_succeed(check_case, data_case = nil)
+    check_case = ensure_check_case(check_case, data_case)
+    assert(check_case.check === true, TEST_ERRORS[101] % {c: data_case.inspect})
+  end
+
+  def ensure_check_case(check_case, data_case)
+    if check_case.is_a?(String)
+      urler = new_url(check_case)
+      check_case = new_case(urler, data_case)
+    else
+      return check_case
+    end
   end
 
 
@@ -90,20 +106,106 @@ class Lazy::CheckCaseTest < Minitest::Test
 
   def test_check_retour_false_if_failure
     urler = new_url('<div class="essai"><span></span></div>')
-    ccase = new_case(urler, {tag:'div.essai', empty:true})
-    assert(ccase.check === false, TEST_ERRORS[100])
+    should_fail(new_case(urler, **{tag:'div.essai', empty:true}))
   end
 
-
+  # Paramètre :count
   def test_check_case_count_is_right
-    # Test du paramètre :only (avec un nombre)
+    # Test du paramètre :count (avec un nombre). On doit trouver 
+    # exactement le nombre d'éléments spécifiés dans la page
     urler = new_url('<html><section><div class="grand"></div><div class="grand"></div></section></html>')
     dcase = {tag:'div.grand', count: 2}
     should_succeed(new_case(urler, dcase))
 
     dcase = {tag:'div.grand', count: 3}
     should_fail(new_case(urler, dcase))
+  end
 
+  # Paramètre :empty
+  # 
+  # Si on précise 'empty: true' dans la recette, alors l'élément doit être
+  # vide. Si on précise 'empty: false' alors il ne doit surtout pas être
+  # vide.
+  def test_check_case_empty_is_right
+    code = '<div class="vide"></div>'
+    dcase = {tag:'div.vide', empty:true}
+    should_succeed(code, dcase)
+
+    code = '<div class="pasvide"><span></span></div>'
+    dcase = {tag:'div.pasvide', empty:true}
+    should_fail(code, dcase)
+
+    code = '<div class="vide"></div>'
+    dcase = {tag:'div.vide', empty:false}
+    should_fail(code, dcase)
+  end
+
+  # Paramètre :contains
+  # 
+  # Si on précise du contenu, on doit le trouver dans la balise
+  # spécifiée. Par exemple, en mettant < contains: 'div.vide' > on
+  # doit trouver un div de classe css "vide"
+  # 
+  # :contains peut être :
+  #   - un string (un texte à contenir)
+  #   - une balise avec classe et/ou identifiant
+  #   - une table contenant :tag, :count, etc. comme un node normal
+  #   - une liste de l'un de ces trucs
+  #
+  def test_check_case_contains
+
+
+    code  = '<div id="pasvide">Bonjour</div>'
+    dcase = {tag: 'div#pasvide', contains:'Bonjour'}
+    should_succeed(code, dcase)
+    # Ça peut être contenu dans un sous-élément
+    code  = '<div id="pasvide"><span class="autre">Bonjour</span></div>'
+    should_succeed(code, dcase)
+    # peut être contenu en un seul mot dans deux sous-élément
+    code  = '<div id="pasvide"><span class="autre">Bon<span>jour</span></span></div>'
+    should_succeed(code, dcase)
+    code  = '<div id="pasvide">Bonjour</div>'
+    dcase = {tag: 'div#pasvide', contains:['Bon','jour']}
+    should_succeed(code, dcase)
+    # Ça peut être contenu dans un sous-élément
+    code  = '<div id="pasvide">Bon<span>jour</span></div>'
+    should_succeed(code, dcase)
+
+
+    code  = '<div id="pasvide">Bonjour</div>'
+    dcase = {tag: 'div#pasvide', contains:'Au revoir'}
+    should_fail(code, dcase)
+    # Il doit contenir tous les mots définis
+    dcase = {tag: 'div#pasvide', contains:['Bonjour', 'Au revoir']}
+    should_fail(code, dcase)
+
+    code = '<div class="vide"></div>'
+    dcase = {tag: 'div.vide', contains: 'div.contenu'}
+    should_fail(code, dcase)
+
+    code = '<div class="contient"><div id="dedans"></div></div>'
+    dcase = {tag: 'div.contient', contains: 'div#dedans'}
+    should_succeed(code, dcase)
+
+    # -- le bon nombre -
+    code = '<div class="contient"><div class="in"></div><div class="in"></div></div>'
+    dcase = {tag: 'div.contient', contains:'div.in'}
+    should_succeed(code, dcase)
+    dcase = {tag: 'div.contient', contains:{tag:'div.in', count:2}}
+    should_succeed(code, dcase)
+    dcase = {tag: 'div.contient', contains:{tag:'div.in', count:3}}
+    should_fail(code, dcase)
+
+    # -- Même imbriqués --
+    code = '<div class="contient"><div class="in"><div class="in"></div></div></div>'
+    dcase = {tag:'div.contient', contains:{tag:'div.in', count:2}}
+    should_succeed(code, dcase)
+
+    # -- Ne compte pas ceux autour --
+    code = '<div class="in"></div> <div class="in"><div class="contient"><div class="in"><div class="in"></div></div></div></div>'
+    dcase = {tag:'div.contient', contains:{tag:'div.in', count:2}}
+    should_succeed(code, dcase)
+  
   end
 
 end

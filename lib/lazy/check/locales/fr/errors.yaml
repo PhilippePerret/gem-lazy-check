@@ -19,3 +19,27 @@
 1003: |
   La donnée :tag du check case devrait au moins définir un identifiant (tag#id)
   ou une classe CSS (tag.css). '%{a}' ne définit ni l'un ni l'autre.
+2000: |
+  Définition de :contains erroné. Doit être une table (définissant au moins
+  :tag), un string (un texte à contenir ou une balise avec identifiant et/ou
+  class CSS) ou une liste de ces éléments. La classe de l'élément, quoi qu'il
+  en soit, ne peut être %{c}.
+
+# --- Les erreurs de check de la page ---
+4999: |
+  Aucun élément n'a été trouvé alors qu'on en attendait %{e}.
+5000: |
+  Mauvais compte. On attend %{e} éléments %{tag}. On en a trouvé
+  %{a} dans la page.
+5001: |
+  Le contenu de %{tag} devrait être vide. Mais il contient %{a}.
+5002: |
+  Le contenu de %{tag} ne devrait pas être vide. Or il l'est.
+
+5010: |
+  On devrait trouver %{tag} contenant %{e}. Les problèmes suivants ont été
+  rencontrés : %{a}.
+5020: |
+  devrait contenir la chaine %{e}
+5021: |
+  devrait contenir la tag définie par %{e}

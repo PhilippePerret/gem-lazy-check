@@ -17,6 +17,8 @@ module Lazy
 class Checker
 class CheckCase
 
+  class CheckCaseError < StandardError; end
+
   attr_reader :urler
   attr_reader :data
 
@@ -38,32 +40,121 @@ class CheckCase
   end
 
   def check
+    @sub_errors = []
     # decompose_tag # analyse de data[:tag] fourni
-    puts "noko = #{noko.inspect}".bleu
-    puts "tag = #{tag.inspect}".bleu
-    ary = noko.css("//#{tag}")
-    ary_count = ary.count # pourra être rectifié
-    puts "ary = #{ary.inspect}".bleu
-    puts "ary_count = #{ary_count.inspect}".bleu
-    if ary.empty?
-      return false
-    else
-      # TODO On doit poursuivre les tests
+    # puts "noko = #{noko.inspect}".bleu
+    # puts "tag = #{tag.inspect}".bleu
+    founds = noko.css("//#{tag}")
+    founds_count = founds.count # pourra être rectifié
+    # puts "founds = #{founds.inspect}".bleu
+    puts "founds count = #{founds_count.inspect}".bleu
+    if founds.empty?
+      #
+      # Aucun élément ne remplit les conditions du tag (nom de
+      # balise, identifiant et/ou classes CSS)
       # 
-      if count? && ary_count != count
-        @error = "Bad count"
-        return false
+      if count === 0
+        return true
+      else
+        _raise(4999, count || 'un nombre indéfini')
       end
+    else
+      #
+      # Des éléments remplissent les conditions
+      # On va les filtrer et voir ce qui reste de valide.
+      # 
+
+      puts "\n\n\n"
+      puts "Recherche dans #{tag.inspect}".bleu
+
+      founds = founds.select do |found|
+        # puts "found.methods: #{found.methods}"
+        puts "\n\n"
+        puts "found = #{found.to_s}".jaune
+        puts "found = #{found.inspect}".jaune
+        puts "found.children? #{found.children?.inspect}".jaune
+        # exit 2
+        puts "found.blank? #{found.blank?.inspect}".jaune
+        puts "found.text? #{found.text?.inspect}".jaune
+        puts "found.content : #{found.content.inspect}".jaune
+        puts "found.content.empty? : #{found.content.empty?.inspect}".jaune
+        puts "found.text : #{found.text.inspect}".jaune
+        puts "found.text.empty? : #{found.text.empty?.inspect}".jaune
+        # next
+        # exit 1
+        begin 
+
+          #
+          # -- Propriété :empty --
+          # 
+          if be_empty? && not(found.empty?)
+            # on attend que le conteneur soit vide, mais il a du contenu
+            _raise(5001, nil, found.content)
+          elsif not_be_empty? && found.empty?
+            # on attend un conteneur pas vide, mais il est vide
+            _raise(5002)
+          end
+
+          #
+          # -- Propriété :contains --
+          # 
+          if contains? && not(found.contains?(data[:contains]))
+            _raise(5010, data[:contains].inspect, found.errors.pretty_join)
+          end
+
+          true
+        rescue CheckCaseError => e
+          @sub_errors << e.message
+          false
+        end
+      end #/fin de boucle sur les founds
+
+      # -- Nombre d'éléments restant --
+      founds_count = founds.count
+
+      puts "Il en reste : #{founds_count}".bleu
+
+      # Maintenant que tous les éléments ont été filtrés, on peut
+      # voir si le nombre qui reste correspond aux attentes :
+      # - soit il y en a un certain nombre, sans contrainte sur le
+      #   count.
+      # - soit il y a une contrainte :count sur le nombre et elle
+      #   est respectée ou trahie.
+
+      if founds_count == 0
+        _raise(4999, count || 'un nombre indéfini')
+        # ATTENTION : C'EST PEUT-ÊTRE CE QUE L'ON CHERCHE, À NE
+        # PAS TROUVER CET ÉLÉMENT
+      end
+
+      # 
+      # Propriété :count
+      # 
+      if count? && founds_count != count
+        _raise(5000, count, founds_count, :count)
+      end
+
+      #
+      # Si on arrive ici c'est que c'est un plein succès
+      # 
       return true
     end
+  rescue CheckCaseError => e
+    @error = e.message
+    return false
   end
 
-  # -- Data --
+  def _raise(errno, expected = nil, actual = nil, property = nil)
+    derror = {tag: tag, e: expected, a:actual}
+    raise CheckCaseError.new(ERRORS[errno] % derror)
+  end
 
-  def empty?
+  # -- Data / Predicate de check --
+
+  def be_empty?
     data[:empty] === true
   end
-  def not_empty?
+  def not_be_empty?
     data[:empty] === false
   end
 
@@ -73,6 +164,34 @@ class CheckCase
     not(count.nil?)
   end
 
+  # @return true si on doit faire le check sur le contenu
+  # 
+  def contains?
+    data.key?(:contains) && not(data[:contains].nil?)
+  end
+
+  # -- Données / Predicate utiles pour checker --
+  # (noter que toutes ces valeurs ne sont estimées que si elles
+  #  sont utilisées)
+
+  # @return true si la balise contient quelque chose
+  def has_content?
+    not(content.empty?)
+  end
+
+  # @return true si la balise ne contient rien
+  def not_has_content?
+    content.empty?
+  end
+
+  # @return le contenu de la balise, sous forme de string
+  # 
+  def content
+    tag.content
+  end
+
+
+  # -- Données du Case --
 
   def tag       ; data[:tag]      end
   def count     ; data[:count]    end

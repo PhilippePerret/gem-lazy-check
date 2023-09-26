@@ -4,9 +4,9 @@
   Attendu : %{e}
   Obtenu  : %{a}
 100: |
-  Le test devrait échouer.
+  Le test devrait échouer (avec les données %{c}).
 101: |
-  Le test devrait réussir.
+  Le test devrait réussir (avec les données %{c}).
 
 200: |
   %{a} n'est pas une source valide. Il faut fournir soit une adresse internet,
