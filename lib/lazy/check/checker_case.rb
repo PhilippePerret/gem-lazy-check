@@ -45,9 +45,11 @@ class CheckCase
   def check
     ctag = CheckedTag.new(data)
     if ctag.is_in?(noko)
-      puts "👍".vert
+      puts "👍".vert # laisser ça au rapport
+      return true
     else
-      puts "👎".rouge
+      puts "👎".rouge # laisser ça au rapport
+      return false
     end
   end
 

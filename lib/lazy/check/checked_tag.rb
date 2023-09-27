@@ -26,22 +26,46 @@ class CheckedTag
   # @param noko [Nokogiri::XML::Element] L'élément qui doit contenir le checked-tag courant
   # 
   def is_in?(noko)
+
+    puts "is_in? avec noko : #{noko.inspect}".bleu
+    #
+    # Array dans lequel seront placés tous les candidats, jusqu'aux
+    # derniers
+    # 
+    founds = []
+
+    #
+    # Traitement différent en fonction du fait qu'il s'agisse d'un
+    # document Nokogiri ou d'un XML::Element Nokogiri
+    # 
     if noko.document?
       # 
       # <= L'élément envoyé est un document Nokogiri
       #    Nokogiri::HTML4/5::Document
       # 
       founds = noko.css("//#{data[:tag]}")
-      puts "Nombre de trouvés : #{founds.count}".bleu
+
+      puts "founds (#{data[:tag]}) : #{founds.inspect}".jaune
+
+    elsif direct_child_only?
+      #
+      # Si on ne doit pas traverser toutes les générations d'éléments
+      # 
+      noko.children.each do |child|
+        founds << child if tagname_id_class_ok?(child)
+      end
     else
       #
+      # Si on peut traverser toutes les générations d'éléments
+      # 
+      #
       # <= L'élément envoyé est un node (un XML::Element)
-      # => On doit chercher dans les enfans
-      puts "Nombre d'enfants : #{noko.elements.count}".jaune
-      noko.elements.each do |child|
-        puts "child.node_name = #{child.node_name.inspect}".jaune
-        # puts "child.methods = #{child.methods.join("\n")}".bleu
-      end    
+      # => On doit chercher dans les enfants
+      # 
+      noko.traverse_children do |child|
+        # puts "child: #{child.inspect}".bleu
+        founds << child if tagname_id_class_ok?(child)
+      end
     end
 
     #
@@ -99,16 +123,32 @@ class CheckedTag
     return true
   end
 
+  def tagname_id_class_ok?(child)
+    name_ok = child.node_name == tag_name
+    id_ok   = id.nil? ? true : child.id == id
+    css_ok  = css.nil? ? true : child_has_css?(child.classes, css)
+    return name_ok && id_ok && css_ok
+  end
 
   # --
   # -- Check précis d'un node (Nokogiri::XML::Element) trouvé
   # -- correspond à la recherche
   # --
+  # @note
+  #   Il existe deux sorte d'emptiness :
+  #   1. l'absence de texte (mais le node peut contenir d'autres nodes)
+  #   2. la vrai emptiness quand le node ne contient vraiment rien
   def check_emptiness_of(found)
+    # puts "must_be_empty? #{must_be_empty?.inspect}".jaune
+    # puts "found.empty? #{found.empty?.inspect}".bleu
     if must_be_empty? && not(found.empty?)
       _raise(5001, nil, found.content)
     elsif must_not_be_empty? && found.empty?
       _raise(5002)
+    elsif must_have_no_text? && (found.has_text?)
+      _raise(5003, nil, found.text)
+    elsif must_have_text? && (found.has_no_text?)
+      _raise(5004)
     end
   end
 
@@ -125,14 +165,36 @@ class CheckedTag
   def check_attributes_of(found)
     if must_have_attributes? 
       missing_attrs = found.attributes?(attributes)
-      if not(missing_attrs.empty?)
-
+      if missing_attrs.empty?
+        return true
+      else
+        # Il y a des attributs manquants
+        @errors << "attributs manquand : #{missing_attrs.inspect}"
+        return false
       end
     end
   end
 
+  # @return true si les +child_css+ contiennent toutes les +css+
+  # 
+  def child_has_css?(child_css, csss)
+    csss.each do |css|
+      return false if not(child_css.include?(css))
+    end
+  end
+
+
   # -- Predicate Methods --
 
+  def direct_child_only?
+    :TRUE == @directchild ||= true_or_false(data[:direct_child_only] === true)    
+  end
+  def must_have_text?
+    :TRUE == @mhtxt ||= true_or_false(notext === false)
+  end
+  def must_have_no_text?
+    :TRUE == @mhnotxt ||= true_or_false(notext === true)
+  end
   def must_be_empty?
     :TRUE == @mbempty ||= true_or_false(empty === true)
   end
@@ -157,17 +219,16 @@ class CheckedTag
   def tag         ; data[:tag]        end
   def count       ; data[:count]      end
   def empty       ; data[:empty]      end
+  def notext      ; data[:notext]     end
   def contains    ; data[:contains]   end
   def attributes  ; data[:attrs]      end
 
   private
 
-
     def _raise(errno, expected = nil, actual = nil, property = nil)
       derror = {tag: tag, e: expected, a:actual}
       raise CheckCaseError.new(ERRORS[errno] % derror)
     end
-
 
     # Méthode qui décompose la donnée :tag pour en tirer le nom
     # de la balise (@tag_name), l'identifiant (@tag_id) et les

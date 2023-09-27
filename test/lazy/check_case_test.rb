@@ -23,14 +23,14 @@ class Lazy::CheckCaseTest < Minitest::Test
   # méthode ultime le code de la page (check_case::String) et
   # les données du Case.
   # Mais à l'origine, elle ne recevait qu'un CheckCase
-  def should_fail(check_case, data_case = nil)
+  def should_succeed(check_case, data_case = nil, linenum)
     check_case = ensure_check_case(check_case, data_case)
-    assert(check_case.check === false, TEST_ERRORS[100] % {c: data_case.inspect})
+    assert(check_case.check === true, TEST_ERRORS[101] % {c: data_case.inspect, l:linenum})
   end
   # @idem que la précédente
-  def should_succeed(check_case, data_case = nil)
+  def should_fail(check_case, data_case = nil, linenum)
     check_case = ensure_check_case(check_case, data_case)
-    assert(check_case.check === true, TEST_ERRORS[101] % {c: data_case.inspect})
+    assert(check_case.check === false, TEST_ERRORS[100] % {c: data_case.inspect, l:linenum})
   end
 
   def ensure_check_case(check_case, data_case)
@@ -98,21 +98,21 @@ class Lazy::CheckCaseTest < Minitest::Test
     assert_respond_to ccase, :check
   end
 
-  def test_check_retour_true_if_succes
-    urler = Lazy::Checker::Url.new('<div class="essai hidden"> </div>')
-    ccase = Lazy::Checker::CheckCase.new(urler, {tag:'div.essai.hidden', empty:true})
-    res = ccase.check
-    assert(res === true, TEST_ERRORS[101])
+  def test_check_retour_true_if_success
+    code = '<div class="essai hidden"> </div>'
+    dcas = {tag:'div.essai.hidden', empty:true}
+    should_succeed(code, dcas, __LINE__)
 
-    urler = Lazy::Checker::Url.new('<div class="essai"></div>')
-    ccase = Lazy::Checker::CheckCase.new(urler, {tag:'div.essai', empty:true})
-    assert(ccase.check === true, TEST_ERRORS[101])
+    code = '<div class="essai"></div>'
+    dcas = {tag:'div.essai', empty:true}
+    should_succeed(code, dcas, __LINE__)
   end
 
 
   def test_check_retour_false_if_failure
-    urler = new_url('<div class="essai"><span></span></div>')
-    should_fail(new_case(urler, **{tag:'div.essai', empty:true}))
+    code = '<div class="essai"><span></span></div>'
+    should_fail(code, {tag:'div.essai', empty:true}, __LINE__)
+    should_succeed(code, {tag:'div.essai', notext: true}, __LINE__)
   end
 
   # Paramètre :count
@@ -121,10 +121,10 @@ class Lazy::CheckCaseTest < Minitest::Test
     # exactement le nombre d'éléments spécifiés dans la page
     urler = new_url('<html><section><div class="grand"></div><div class="grand"></div></section></html>')
     dcase = {tag:'div.grand', count: 2}
-    should_succeed(new_case(urler, dcase))
+    should_succeed(new_case(urler, dcase), nil, __LINE__)
 
     dcase = {tag:'div.grand', count: 3}
-    should_fail(new_case(urler, dcase))
+    should_fail(new_case(urler, dcase), nil, __LINE__)
   end
 
   # Paramètre :empty
@@ -135,15 +135,15 @@ class Lazy::CheckCaseTest < Minitest::Test
   def test_check_case_empty_is_right
     code = '<div class="vide"></div>'
     dcase = {tag:'div.vide', empty:true}
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
 
     code = '<div class="pasvide"><span></span></div>'
     dcase = {tag:'div.pasvide', empty:true}
-    should_fail(code, dcase)
+    should_fail(code, dcase, __LINE__)
 
     code = '<div class="vide"></div>'
     dcase = {tag:'div.vide', empty:false}
-    should_fail(code, dcase)
+    should_fail(code, dcase, __LINE__)
   end
 
   # Paramètre :contains
@@ -163,56 +163,69 @@ class Lazy::CheckCaseTest < Minitest::Test
 
     code  = '<div id="pasvide">Bonjour</div>'
     dcase = {tag: 'div#pasvide', contains:'Bonjour'}
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
     # Ça peut être contenu dans un sous-élément
     code  = '<div id="pasvide"><span class="autre">Bonjour</span></div>'
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
     # peut être contenu en un seul mot dans deux sous-élément
     code  = '<div id="pasvide"><span class="autre">Bon<span>jour</span></span></div>'
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
     code  = '<div id="pasvide">Bonjour</div>'
     dcase = {tag: 'div#pasvide', contains:['Bon','jour']}
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
     # Ça peut être contenu dans un sous-élément
     code  = '<div id="pasvide">Bon<span>jour</span></div>'
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
 
 
     code  = '<div id="pasvide">Bonjour</div>'
     dcase = {tag: 'div#pasvide', contains:'Au revoir'}
-    should_fail(code, dcase)
+    should_fail(code, dcase, __LINE__)
     # Il doit contenir tous les mots définis
     dcase = {tag: 'div#pasvide', contains:['Bonjour', 'Au revoir']}
-    should_fail(code, dcase)
+    should_fail(code, dcase, __LINE__)
 
     code = '<div class="vide"></div>'
     dcase = {tag: 'div.vide', contains: 'div.contenu'}
-    should_fail(code, dcase)
+    should_fail(code, dcase, __LINE__)
 
     # -> celui-là
     code = '<div class="contient"><div id="dedans"></div></div>'
     dcase = {tag: 'div.contient', contains: 'div#dedans'}
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
 
     # -- le bon nombre -
     code = '<div class="contient"><div class="in"></div><div class="in"></div></div>'
     dcase = {tag: 'div.contient', contains:'div.in'}
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
     dcase = {tag: 'div.contient', contains:{tag:'div.in', count:2}}
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
     dcase = {tag: 'div.contient', contains:{tag:'div.in', count:3}}
-    should_fail(code, dcase)
+    should_fail(code, dcase, __LINE__)
 
     # -- Même imbriqués --
+
+  
+  end
+
+  def test_divs_imbriqued
+    # Si on cherche deux éléments de même classe, mais qu'ils sont
+    # imbriqués, on doit produire un succès
     code = '<div class="contient"><div class="in"><div class="in"></div></div></div>'
     dcase = {tag:'div.contient', contains:{tag:'div.in', count:2}}
-    should_succeed(code, dcase)
+    should_succeed(code, dcase, __LINE__)
+    # L'affirmation précédente est vrai SAUF si :direct_child_only
+    # est à true
+    code = '<div class="contient"><div class="in"><div class="in"></div></div></div>'
+    dcase = {tag:'div.contient', contains:{tag:'div.in', count:2, direct_child_only: true}}
+    should_fail(code, dcase, __LINE__)
+  end
 
-    # -- Ne compte pas ceux autour --
-    code = '<div class="in"></div> <div class="in"><div class="contient"><div class="in"><div class="in"></div></div></div></div>'
-    dcase = {tag:'div.contient', contains:{tag:'div.in', count:2}}
-    should_succeed(code, dcase)
-  
+  def test_ignore_elements_around
+    # -- Ne doit pas compter les éléments autour --
+    code = '<root><div class="in"></div> <div class="in"><div class="contient"><div class="in"><div class="in"></div></div></div></div></root>'
+    dcas = {tag:'div.contient', contains:{tag:'div.in', count:2}}
+    should_succeed(code, dcas, __LINE__)
   end
 
 end

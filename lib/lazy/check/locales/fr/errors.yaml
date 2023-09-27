@@ -72,7 +72,12 @@
   Le contenu de %{tag} devrait être vide. Mais il contient %{a}.
 5002: |
   Le contenu de %{tag} ne devrait pas être vide. Or il l'est.
-
+5003: |
+  Le contenu de %{tag} ne devrait comporter aucun texte, or 
+  il contient %{a}.
+5004: |
+  Le contenu de %{tag} devrait comporter du texte, or il n'en affiche
+  aucun.
 5010: |
   On devrait trouver %{tag} contenant %{e}. Les problèmes suivants ont été
   rencontrés : %{a}.

@@ -6,6 +6,10 @@ module Nokogiri
     # début d'un check
     attr_reader :errors
 
+    def traverse_children(&block)
+      children.each { |ch| ch.traverse(&block) }
+    end
+
     # @return true si le node est vraiment vide
     def empty?
       not(children?) && content.empty?
@@ -13,6 +17,14 @@ module Nokogiri
 
     def children?
       elements && elements.count > 0
+    end
+
+    def has_text?
+      not(text.empty?)
+    end
+
+    def has_no_text?
+      text.empty?
     end
 
     # Test du contenu
@@ -87,17 +99,21 @@ module Nokogiri
       end
     end
 
-    # # @return [Array] Liste des attributs qui manque à l'élément
-    # # par rapport à attrs
-    # def attributes?(attrs)
-    #   attrs.select do |attr_name, attr_value|
-    #     if self.key?(attr_name) && self.attr(attr_name) == attr_value
-    #       false
-    #     else
-    #       true
-    #     end
-    #   end
-    # end
+    # @return [Array] Liste des attributs qui manque à l'élément
+    # par rapport à attrs
+    def attributes?(attrs)
+      attrs.select do |attr_name, attr_value|
+        if self.key?(attr_name) && self.attr(attr_name) == attr_value
+          false
+        else
+          true
+        end
+      end
+    end
 
+
+    def id
+      @id ||= self['id']
+    end
   end #/class XML::Element
 end #/module Nokogiri
