@@ -50,6 +50,15 @@ La recette (`recipe.yaml`) définit les vérifications qu'il faut effectuer.
   empty: true
 ~~~
 
+### Properties
+
+~~~yaml
+tag:                  [String] Le sélector
+count:             [Integer] Nombre attendu d'éléments
+empty:            [Bool] Si doit être vide ou non vide
+direct_child:   [Bool] Si doit être un enfant direct
+~~~
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

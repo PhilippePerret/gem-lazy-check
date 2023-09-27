@@ -183,6 +183,7 @@ class Lazy::CheckCaseTest < Minitest::Test
     dcase = {tag: 'div.vide', contains: 'div.contenu'}
     should_fail(code, dcase)
 
+    # -> celui-là
     code = '<div class="contient"><div id="dedans"></div></div>'
     dcase = {tag: 'div.contient', contains: 'div#dedans'}
     should_succeed(code, dcase)

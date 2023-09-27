@@ -41,7 +41,6 @@ class CheckCase
 
   def check
     @sub_errors = []
-    # decompose_tag # analyse de data[:tag] fourni
     # puts "noko = #{noko.inspect}".bleu
     # puts "tag = #{tag.inspect}".bleu
     founds = noko.css("//#{tag}")
@@ -68,7 +67,8 @@ class CheckCase
       puts "Recherche dans #{tag.inspect}".bleu
 
       founds = founds.select do |found|
-        # puts "found.methods: #{found.methods}"
+        # puts "found.methods: #{found.methods}".bleu
+        # exit
         puts "\n\n"
         puts "found = #{found.to_s}".jaune
         puts "found = #{found.inspect}".jaune
@@ -207,17 +207,6 @@ class CheckCase
 
   private 
 
-    # Méthode qui décompose la donnée :tag pour en tirer le nom
-    # de la balise (@tag_name), l'identifiant (@tag_id) et les
-    # classes css (@tag_classes)
-    def decompose_tag
-      tag = data[:tag].downcase
-      found = tag.match(REG_TAG)
-      @tag_name = found[:tag_name]
-      @tag_id   = found[:tag_id]
-      @tag_css  = found[:tag_classes].split('.')
-    end
-    REG_TAG = /^(?<tag_name>[a-z_\-]+)(\#(?<tag_id>[a-z0-9_\-]+))?(\.(?<tag_classes>[a-z0-9_\-\.]+))?$/.freeze
 
     def check_data
       data.key?(:tag) || raise(ArgumentError.new(ERRORS[1002] % {ks: data.keys.collect{|k|":#{k}"}.join(', ')}))

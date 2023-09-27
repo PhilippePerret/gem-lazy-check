@@ -12,7 +12,7 @@ module Nokogiri
     end
 
     def children?
-      children && children.count > 0
+      elements && elements.count > 0
     end
 
     # Test du contenu
@@ -42,7 +42,7 @@ module Nokogiri
         # 
         case required
         when String
-          if required.match?(/^<.+?>$/)
+          if required.match?(/[^ ]/) && required.match?(/[#.]/)
             contains_as_tag?({tag: required})
           else
             contains_as_string?(required)
@@ -78,7 +78,8 @@ module Nokogiri
     # une erreur dans @errors
     # 
     def contains_as_tag?(dtag)
-      if self.css(dtag[:tag])
+      ctag = Lazy::Checker::CheckedTag.new(dtag)
+      if ctag.is_in?(self)
         return true
       else
         @errors << (ERRORS[5021] % {e: dtag.inspect})
