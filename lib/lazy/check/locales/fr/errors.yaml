@@ -1,11 +1,46 @@
 ---
+# -- Erreurs de recette --
 200: |
   Le fichier recette '%{path}' est introuvable.
 201: |
   La donnée %{a} n'est pas valide, pour instancier un Checker::Url. Il faudrait soit
   une URL (conforme) soit un code HTML (valide).
+202: |
+  Le fichier recette ne contient aucune donnée.
+203: |
+  Les données de la recette devraient être une table (Hash) pas un %{c}.
+204: |
+  La recette devrait définir la clé :tests. Elle ne définit que les clés %{ks}.
+205: |
+  Les données :tests devraient être un Array, pas un %{c}.
+
+# -- Erreurs de la définition d'un test --
+300: |
+  Les données du test devraient être une table Hash, pas un %{c}.
+301: |
+  La table du test devrait définir la propriété :url, qui est la page à atteindre. 
+  Je ne trouve que les propriétés %{ks}.
+302: |
+  L'URL fournie (%{u}) n'est pas valide : %{e}.
+303: |
+  elle doit être définie, pas nil.
+304: |
+  elle doit être un string, pas un %{c}.
+305: |
+  elle doit obligatoirement commencer par 'http' ou 'https'.
+306: |
+  elle ne devrait contenir aucune espace…
+307: |
+  Un test doit définir son nom (dans :name), il ne définit que les clés
+  %{ks}.
+308: |
+  Un test doit définir les checks à faire dans une propriété qui s'appelle
+  justement :checks. Le test ne définit que les propriétés %{ks}…
+309: |
+  Les checks à faire pour le test (:checks) devraient être une liste
+  Array, par un %{c}.
 800: |
-  :url devrait être un string (une URL ou un code HTML). C'est un %{class}.
+  -- INUTILISÉ --
 1000: |
   L'instanciation de Lazy::Checker::CheckCase nécessite un Lazy::Checker::Url
   en premier argument. La valeur est %{a}::%{c}.

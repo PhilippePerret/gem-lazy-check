@@ -39,12 +39,30 @@ class Test
 
 
     def check_data
-      data.is_a?(Hash)            || raise("Les données du test devraient être une table.")
-      data.key?(:url)             || raise("Les données du test devraient définir :url.")
-      data[:url].is_a?(String)    || raise(ERRORS[800] % {class: "#{data[:url].class}"})
-      data.key?(:name)            || raise("Les données du test devraient avoir un :name")
-      data.key?(:checks)          || raise("Les données du test devraient définir les checks à faire (:checks).")
-      data[:checks].is_a?(Array)  || raise("Les checks à faire du test devraient être une liste.")
+      # -- Pour simplifier l'écriture des erreurs --
+      data_keys   = data.keys.pretty_join
+      data_class  = data.class.name
+      # -- Tests de validité --
+      data.is_a?(Hash)            || raise(ERRORS[300] % {c: data_class})
+      data.key?(:url)             || raise(ERRORS[300] % {ks: data_keys})
+      err = check_url(data[:url])
+      err.nil?                    || raise[ERRORS[302 % {e: err, u: data[:url]}]]
+      data.key?(:name)            || raise(ERRORS[307] % {ks: data_keys})
+      data.key?(:checks)          || raise(ERRORS[308] % {ks: data_keys})
+      data[:checks].is_a?(Array)  || raise(ERRORS[309] % {c: data_class})
+    end
+
+    # S'assure que +url+ est une url valide. @return nil si c'est le
+    # cas où l'erreur dans le cas contraire.
+    def check_url(url)
+      url                     || raise(ERRORS[303])
+      url.is_a?(String)       || raise(ERRORS[304] % {c: url.class.name})
+      url.start_with?('http') || raise(ERRORS[305])
+      not(url.match?(/ /))    || raise(ERRORS[306])
+    rescue Exception => e
+      return e.message
+    else
+      return nil
     end
 
 end #/class Test

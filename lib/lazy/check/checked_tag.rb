@@ -21,6 +21,9 @@ class CheckedTag
   # @param noko [Nokogiri::XML::Element] L'élément qui doit contenir le checked-tag courant
   # 
   def is_in?(noko)
+    puts "noko.class: #{noko.class.name}"
+    exit 
+    if noko.is_a?(Nokogiri::XML) end
     puts "Nombre d'enfants : #{noko.elements.count}".jaune
     noko.elements.each do |child|
       puts "child.node_name = #{child.node_name.inspect}".jaune

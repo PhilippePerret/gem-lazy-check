@@ -26,10 +26,15 @@ class CheckCase
   # 
   # @param urler [Hash] Checker::Url parsé à utiliser
   # 
-  # @param data [Hash] Les données du check, tels que définis dans
-  #                         la recette du test.
+  # @param data [Hash]  Les données du check, tels que définis dans
+  #                     la recette du test. Sera transformé en une
+  #                     CheckedTag
   # 
-  #   :tag  [Requis] La balise, l'identifiant et les classes. Par exemple "div#mondiv.maclasse.autreclasse"
+  #   :tag          [String] [Requis] La balise, l'identifiant et les classes. Par exemple "div#mondiv.maclasse.autreclasse"
+  #   :count        [Integer] Nombre d'éléments à trouver
+  #   :empty        [Boolean] true si doit être vide, false si ne doit pas être vide
+  #   :direct_child [Boolean] true si doit être un enfant direct (mais sert plutôt pour les sous-éléments à checker)
+  #   :attrs        [Hash]    Attributs à trouver
   # 
   def initialize(urler, data)
     urler.is_a?(Lazy::Checker::Url) || raise(ArgumentError.new(ERRORS[1000] % {a:urler,c:urler.class.name}))
@@ -39,7 +44,16 @@ class CheckCase
     check_data
   end
 
+  # La nouvelle façon de checker
   def check
+    ctag = CheckedTag.new(data)
+    if ctag.is_in?(noko)
+      puts "👍".vert
+    else
+      puts "👎".rouge
+  end
+
+  def OLD_check
     @sub_errors = []
     # puts "noko = #{noko.inspect}".bleu
     # puts "tag = #{tag.inspect}".bleu

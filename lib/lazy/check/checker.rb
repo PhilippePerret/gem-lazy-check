@@ -9,9 +9,8 @@ class Checker
     @recipe_path = recipe_path
   end
 
-
   def check
-    if proceed_check
+    if recipe_valid? && proceed_check
       puts "Je suis le checker ultime et j'ai réussi.".vert
     else
       puts "Je suis le checker ultime et j'ai échoué".rouge
@@ -19,24 +18,32 @@ class Checker
   end
 
   # La méthode (silencieuse) qui produit le check
+  # ("silencieuse" parce qu'elle ne produit que des raises)
   def proceed_check
-    not(data.nil?)            || raise("Il faudrait des données dans le fichier recette.")
-    data.is_a?(Hash)          || raise("Les données devraient être une table.")
-    data.key?(:tests)         || raise("Les données devraient définir les tests (:tests)")
-    data[:tests].is_a?(Array) || raise("Les données tests (data[:tests]) devraient être une liste (de tests).")
-  
-    # -- C'est bon, on peut y aller --
-    data[:tests].collect do |dtest|
+    @report = Reporter.new(self)
+    @report.start
+    recipe[:tests].collect do |dtest|
       Test.new(dtest)
     end.each do |test|
       test.check
     end
+    @report.end
+    @report.display
   end
 
-
-  def data
-    @data ||= YAML.safe_load(File.read(recipe_path), **YAML_OPTIONS)
+  def recipe_valid?
+    not(recipe.nil?)            || raise(ERRORS[202])
+    recipe.is_a?(Hash)          || raise(ERRORS[203] % {c: recipe.class.name})
+    recipe.key?(:tests)         || raise(ERRORS[204] % {ks: recipe.keys.pretty_inspect})
+    recipe[:tests].is_a?(Array) || raise(ERRORS[205] % {c: recipe[:tests].class.name})
   end
+
+  # [Hash] Les données de la recette, ou simplement "la recette"
+  # 
+  def recipe
+    @recipe ||= YAML.safe_load(File.read(recipe_path), **YAML_OPTIONS)
+  end
+  alias :data :recipe
 
 end #/class Checker
 end #/module Lazy
