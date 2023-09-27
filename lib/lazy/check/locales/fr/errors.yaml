@@ -54,6 +54,8 @@
 1003: |
   La donnée :tag du check case devrait au moins définir un identifiant (tag#id)
   ou une classe CSS (tag.css). '%{a}' ne définit ni l'un ni l'autre.
+1004: |
+  Dans la donnée :tag, :count (%{a}) devrait être un nombre, pas un %{c}…
 2000: |
   Définition de :contains erroné. Doit être une table (définissant au moins
   :tag), un string (un texte à contenir ou une balise avec identifiant et/ou
@@ -78,3 +80,5 @@
   devrait contenir la chaine %{e}
 5021: |
   devrait contenir la tag définie par %{e}
+5030: |
+  devrait définir les attributs

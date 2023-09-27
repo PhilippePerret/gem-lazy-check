@@ -87,5 +87,17 @@ module Nokogiri
       end
     end
 
+    # # @return [Array] Liste des attributs qui manque à l'élément
+    # # par rapport à attrs
+    # def attributes?(attrs)
+    #   attrs.select do |attr_name, attr_value|
+    #     if self.key?(attr_name) && self.attr(attr_name) == attr_value
+    #       false
+    #     else
+    #       true
+    #     end
+    #   end
+    # end
+
   end #/class XML::Element
 end #/module Nokogiri

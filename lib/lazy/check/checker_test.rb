@@ -46,7 +46,7 @@ class Test
       data.is_a?(Hash)            || raise(ERRORS[300] % {c: data_class})
       data.key?(:url)             || raise(ERRORS[300] % {ks: data_keys})
       err = check_url(data[:url])
-      err.nil?                    || raise[ERRORS[302 % {e: err, u: data[:url]}]]
+      err.nil?                    || raise(ERRORS[302] % {e: err, u: data[:url]})
       data.key?(:name)            || raise(ERRORS[307] % {ks: data_keys})
       data.key?(:checks)          || raise(ERRORS[308] % {ks: data_keys})
       data[:checks].is_a?(Array)  || raise(ERRORS[309] % {c: data_class})
@@ -54,11 +54,23 @@ class Test
 
     # S'assure que +url+ est une url valide. @return nil si c'est le
     # cas où l'erreur dans le cas contraire.
+    # 
+    # @note 
+    # 
+    #   Ce qu'on appelle une +url+ ici peut être un URI (https://...)
+    #   ou le code résultant du chargement de cette URI, qui sera 
+    #   reconnaissable parce qu'il commence par "<" et finit par ">"
+    #   (oui, c'est de la reconnaissance paresseuse…)
+    # 
     def check_url(url)
       url                     || raise(ERRORS[303])
       url.is_a?(String)       || raise(ERRORS[304] % {c: url.class.name})
-      url.start_with?('http') || raise(ERRORS[305])
-      not(url.match?(/ /))    || raise(ERRORS[306])
+      if url.match?(/^<.+>$/.freeze)
+        # Du code HTML/XML
+      else
+        url.start_with?('http') || raise(ERRORS[305])
+        not(url.match?(/ /))    || raise(ERRORS[306])
+      end
     rescue Exception => e
       return e.message
     else

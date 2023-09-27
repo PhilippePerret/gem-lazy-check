@@ -78,11 +78,17 @@ class Lazy::CheckCaseTest < Minitest::Test
     actual   = err.message.strip
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})    
 
-    err = assert_raises(ArgumentError) { Lazy::Checker::CheckCase.new(urler, {tag:'div', empty: true})}
+    # Attention, à partir d'ici, c'est CheckedTag qu'on test (refactorisation required)
+
+    err = assert_raises(ArgumentError) { Lazy::Checker::CheckedTag.new({tag:'div', empty: true})}
     expected = (ERRORS[1003] % {a: 'div'}).strip
     actual   = err.message.strip
-    assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})    
-  
+    assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})
+    
+    err = assert_raises(ArgumentError) { Lazy::Checker::CheckedTag.new({tag:'div.content', count: "Faux"})}
+    expected  = (ERRORS[1004] % {a: "Faux".inspect, c: "Faux".class.name}).strip
+    actual    = err.message.strip
+    assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected, a:actual})
   end
 
 
