@@ -17,7 +17,6 @@ class Url
 
   # @return Nokogiri Document
   def nokogiri
-    # @nokogiri ||= Nokogiri::HTML(code_html)
     @nokogiri ||= Nokogiri::XML(code_html)
   end
 

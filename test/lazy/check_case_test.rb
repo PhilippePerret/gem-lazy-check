@@ -204,7 +204,6 @@ class Lazy::CheckCaseTest < Minitest::Test
     should_fail(code, dcase, __LINE__)
 
     # -- Même imbriqués --
-
   
   end
 

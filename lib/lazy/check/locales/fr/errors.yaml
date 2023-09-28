@@ -87,3 +87,19 @@
   devrait contenir la tag définie par %{e}
 5030: |
   devrait définir les attributs
+
+6000: |
+  Le premier argument de Lazy::Checker.check doit être du code XML valide.
+  Or, %{se}.
+6001: |
+  %{a} n'est pas un String, c'est un %{c}.
+6002: |
+  un code XML valide se trouve enroulé dans un nœud racine. Ce n'est pas le
+  cas pour %{a}…
+6003: |
+  la donnée est nulle (nil).
+6010: |
+  Le second argument de Lazy::Checker.check doit être une table Hash valide
+  donc un Hash contenant les bonnes clés : %{se}
+6011: |
+  %{a} n'est pas un Hash, c'est un %{c}…

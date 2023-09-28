@@ -1,3 +1,7 @@
+#
+# Cf. code sur Github
+# https://github.com/sparklemotion/nokogiri/blob/main/lib/nokogiri/xml/node.rb
+#
 module Nokogiri
   class XML::Element
 

@@ -9,17 +9,15 @@ class Checker
     @recipe_path = recipe_path
   end
 
-  def check
-    if recipe_valid? && proceed_check
-      puts "Je suis le checker ultime et j'ai réussi.".vert
-    else
-      puts "Je suis le checker ultime et j'ai échoué".rouge
-    end
+  def check(**options)
+    recipe_valid? && proceed_check(**options)
   end
 
+  # = main =
+  # 
   # La méthode (silencieuse) qui produit le check
   # ("silencieuse" parce qu'elle ne produit que des raises)
-  def proceed_check
+  def proceed_check(**options)
     @report = Reporter.new(self)
     @report.start
     recipe[:tests].collect do |dtest|
@@ -28,7 +26,11 @@ class Checker
       test.check
     end
     @report.end
-    @report.display
+    if options[:return_result]
+      return @report
+    else
+      @report.display
+    end
   end
 
   def recipe_valid?

@@ -9,4 +9,5 @@ require "lazy/check/checker_url"
 require "lazy/check/checked_tag"
 require 'lazy/check/Nokogiri_extension'
 require "lazy/check/checker_case"
+require "lazy/check/checker_code"
 require "lazy/check/reporter"

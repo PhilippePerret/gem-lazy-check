@@ -27,7 +27,7 @@ class CheckedTag
   # 
   def is_in?(noko)
 
-    puts "is_in? avec noko : #{noko.inspect}".bleu
+    # puts "is_in? avec noko : #{noko.inspect}".bleu
     #
     # Array dans lequel seront placés tous les candidats, jusqu'aux
     # derniers
@@ -45,7 +45,7 @@ class CheckedTag
       # 
       founds = noko.css("//#{data[:tag]}")
 
-      puts "founds (#{data[:tag]}) : #{founds.inspect}".jaune
+      # puts "founds (#{data[:tag]}) : #{founds.inspect}".jaune
 
     elsif direct_child_only?
       #
@@ -101,7 +101,7 @@ class CheckedTag
     end
 
     founds_count = founds.count
-    puts "Il en reste : #{founds_count}".bleu
+    # puts "Il en reste : #{founds_count}".bleu
 
     # 
     # Propriété :count
