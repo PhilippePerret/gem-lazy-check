@@ -13,6 +13,8 @@
   La recette devrait définir la clé :tests. Elle ne définit que les clés %{ks}.
 205: |
   Les données :tests devraient être un Array, pas un %{c}.
+206: |
+  La recette doit définir son nom avec la clé :name.
 
 # -- Erreurs de la définition d'un test --
 300: |

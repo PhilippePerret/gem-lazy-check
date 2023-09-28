@@ -1,0 +1,8 @@
+# Une recette sans :name
+---
+base: https://localhost
+tests:
+  - name: "Premier test"
+    url: ""
+    checks: 
+      - tag: 'div.contenu'

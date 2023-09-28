@@ -2,12 +2,24 @@ module Lazy
 class Checker
 class Test
 
+  # Instance Lazy::Checker principale qui lance les tests
+  # 
+  attr_reader :checker
+
+  # Données du test
+  # 
+  # Doit contenir :
+  #   - :url    [String] Adresse à visiter
+  #   - :checks [Array] Liste des checks à faire
+  # 
   attr_reader :data
+
   # Instanciation d'un test
   # 
   # @param data [Hash] Table de données du test
   # 
-  def initialize(data)
+  def initialize(checker, data)
+    @checker = checker
     @data = data
     check_data
   end
@@ -16,9 +28,9 @@ class Test
   # Ça consiste à boucler sur tous les :checks défini pour
   # ce test dans la recette.
   # Cf. checker_url.rb pour le détail
-  def check
+  def check(**options)
     data[:checks].each do |dcheck|
-      check_case = CheckCase.new(urler, dcheck)
+      check_case = CheckCase.new(urler, dcheck, checker.reporter)
       result = check_case.check
       if result === true
         # Success
@@ -32,7 +44,15 @@ class Test
   end
 
   def urler
-    @urler ||= Url.new(data[:url])
+    @urler ||= begin
+      full_url = checker.base ? File.join(checker.base, url) : url
+      Url.new(full_url)
+    end
+  end
+
+
+  def url
+    @url ||= data[:url]
   end
 
   private
@@ -68,7 +88,11 @@ class Test
       if url.match?(/^<.+>$/.freeze)
         # Du code HTML/XML
       else
-        url.start_with?('http') || raise(ERRORS[305])
+        if checker.base?
+          # Pas à tester le début
+        else
+          url.start_with?('http') || raise(ERRORS[305])
+        end
         not(url.match?(/ /))    || raise(ERRORS[306])
       end
     rescue Exception => e

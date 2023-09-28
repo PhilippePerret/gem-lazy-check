@@ -11,4 +11,6 @@ reporter_options = {
 Minitest::Reporters.use! [Minitest::Reporters::DefaultReporter.new(reporter_options)]
 
 
-TEST_ERRORS = YAML.safe_load(File.read(File.join(__dir__,'locales',LANG,'errors.yaml')), **YAML_OPTIONS)
+TEST_ERRORS = YAML.safe_load(File.read(File.join(__dir__,'locales',Lazy::LANG,'errors.yaml')), **Lazy::YAML_OPTIONS)
+
+TEST_FOLDER = File.join(Lazy::APP_FOLDER, 'test')

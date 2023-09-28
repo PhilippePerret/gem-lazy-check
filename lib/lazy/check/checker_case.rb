@@ -41,7 +41,7 @@ class CheckCase
     @data   = data
     check_data
     @urler  = urler
-    @reporter = reporter # pas toujours défini
+    @reporter = reporter
   end
 
   # La nouvelle façon de checker

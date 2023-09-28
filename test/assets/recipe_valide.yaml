@@ -1,0 +1,8 @@
+---
+name: Une recette valide pour les test
+base: https://www.atelier-icare.net
+tests:
+  - name: "Le premier test"
+    checks: 
+      - tags: div.citation
+        empty: false

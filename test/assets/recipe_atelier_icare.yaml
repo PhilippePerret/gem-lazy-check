@@ -1,0 +1,16 @@
+---
+name: Test de l'atelier Icare
+base: https://www.atelier-icare.net
+tests:
+  - name: "Affichage des citations"
+    url: ""
+    checks:
+      - tag: div.citation
+        empty: false
+  - name: "Pas de #citation"
+    url: ""
+    checks:
+      - tag: div#citation
+        count: 0
+# ATTENTION : Si des tests sont ajoutés ici, il faut
+# modifier la valeur dans test/lazy/checker_test.rb #test_un_test_complet

@@ -7,6 +7,8 @@ module Lazy
 class Checker
   class Reporter
 
+    attr_reader :checker
+
     def initialize(checker)
       @checker = checker
     end
@@ -16,6 +18,8 @@ class Checker
     # 
     def display
       puts "\n\n"
+      puts "#{checker.name}".jaune
+      puts "-"* checker.name.length
       color = @failures.count > 0 ? :red : :vert
       msg = "Success #{@successs.count} Failures #{@failures.count} Temps #{formated_duree}"
       puts "-" * msg.length

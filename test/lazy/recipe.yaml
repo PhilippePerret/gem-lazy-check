@@ -1,1 +1,4 @@
 ---
+name:   Test d'une page internet
+base:   https://www.atelier-icare.net
+tests:
