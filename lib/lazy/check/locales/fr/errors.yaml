@@ -65,6 +65,7 @@
   en soit, ne peut être %{c}.
 
 # --- Les erreurs de check de la page ---
+
 4999: |
   Aucun élément n'a été trouvé alors qu'on en attendait %{e}.
 5000: |
@@ -83,12 +84,16 @@
 5010: |
   On devrait trouver %{tag} contenant %{e}. Les problèmes suivants ont été
   rencontrés : %{a}.
+5011: |
+  On devrait trouver %{tag} contenant le texte %{e}.
 5020: |
   devrait contenir la chaine %{e}
 5021: |
   devrait contenir la tag définie par %{e}
 5030: |
   devrait définir les attributs
+5031: |
+  attributs manquants ou inégaux : %{e}.
 
 6000: |
   Le premier argument de Lazy::Checker.check doit être du code XML valide.

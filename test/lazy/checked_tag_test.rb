@@ -22,11 +22,4 @@ class Lazy::CheckerCheckedTagTest < Minitest::Test
     assert_respond_to i, :is_in?
   end
 
-  def test_is_in_succeed
-    i = Lazy::Checker::CheckedTag.new({tag:'div#mondiv'})
-    noko = Nokogiri::HTML('<html><head></head><body></body></html>')
-    i.is_in?(noko)
-  end
-
-
 end

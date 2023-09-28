@@ -81,6 +81,10 @@ module Nokogiri
     #  à rien)
     # Surtout : ajoute une erreur à @errors si une erreur est
     # rencontrées.
+    # 
+    # @note
+    #     alias   #match?
+    # 
     def contains_as_string?(searched)
       if text.include?(searched)
         return true
@@ -89,6 +93,7 @@ module Nokogiri
         return false
       end
     end
+    alias :match? :contains_as_string?
 
     # @return true si le node contient le node +dtag+ ou produit
     # une erreur dans @errors
@@ -106,13 +111,22 @@ module Nokogiri
     # @return [Array] Liste des attributs qui manque à l'élément
     # par rapport à attrs
     def attributes?(attrs)
-      attrs.select do |attr_name, attr_value|
-        if self.key?(attr_name) && self.attr(attr_name) == attr_value
-          false
+      miss_attrs = []
+      attrs.each do |attr_name, attr_value|
+        if self.key?(attr_name) 
+          # L'attribut existe
+          if self.attr(attr_name) == attr_value
+            # … et sa valeur est la bonne
+            next
+          else
+            # … mais sa valeur est différente
+            miss_attrs << "attribut #{attr_name} existe, mais avec la valeur #{self.attr(attr_name).inspect}, pas #{attr_value.inspect}."
+          end
         else
-          true
+          miss_attrs << "pas d'attribut #{attr_name.inspect}"
         end
       end
+      return miss_attrs
     end
 
 

@@ -15,6 +15,10 @@ class CheckedTag
     check_data
   end
 
+  # @return les erreurs rencontrées
+  def errors
+    @errors.join("\n") + "Sous-erreurs : #{@sub_errors.join("\n")}"
+  end
   
   # --- TESTS METHODS ---
 
@@ -33,6 +37,12 @@ class CheckedTag
     # derniers
     # 
     founds = []
+
+    #
+    # Pour mettre les erreurs
+    # 
+
+    @errors = []
 
     #
     # Traitement différent en fonction du fait qu'il s'agisse d'un
@@ -153,6 +163,9 @@ class CheckedTag
   end
 
   def check_containess_of(found)
+    if must_have_text? && not(found.match?(text))
+      _raise(5011, text.inspect)
+    end
     if must_have_content? && not(found.contains?(contains))
       _raise(5010, data[:contains].inspect, found.errors.pretty_join)
     end
@@ -166,11 +179,10 @@ class CheckedTag
     if must_have_attributes? 
       missing_attrs = found.attributes?(attributes)
       if missing_attrs.empty?
-        return true
+        return true # ne sert pas vraiment
       else
         # Il y a des attributs manquants
-        @errors << "attributs manquand : #{missing_attrs.inspect}"
-        return false
+        _raise(5031, missing_attrs.inspect)
       end
     end
   end
@@ -190,7 +202,7 @@ class CheckedTag
     :TRUE == @directchild ||= true_or_false(data[:direct_child_only] === true)    
   end
   def must_have_text?
-    :TRUE == @mhtxt ||= true_or_false(notext === false)
+    :TRUE == @mhtxt ||= true_or_false(notext === false || not(text.nil?))
   end
   def must_have_no_text?
     :TRUE == @mhnotxt ||= true_or_false(notext === true)
@@ -217,6 +229,7 @@ class CheckedTag
   def id          ; @id               end
   def css         ; @css              end
   def tag         ; data[:tag]        end
+  def text        ; data[:text]       end
   def count       ; data[:count]      end
   def empty       ; data[:empty]      end
   def notext      ; data[:notext]     end
