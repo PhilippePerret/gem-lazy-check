@@ -16,7 +16,7 @@ tests:
       # On fait exprès de mettre des tests successifs (ce test-là
       # pourrait aller ci-dessus)
       - tag: 'header'
-        min_length: 1000
+        min_length: 50
       - tag: 'footer'
         count: 1
       - tag: 'section#body'

@@ -27,7 +27,38 @@ class CheckedTag
   end
 
   def message
-    MESSAGES[4999] % {tag: tag}
+    MESSAGES[4999] % {tag: tag, f_data: formated_data}
+  end
+
+  # @return [String] les données formatées pour un message de
+  # succès (et peut-être même à l'avenir un message de failure)
+  def formated_data
+    ds = []
+    ds << "#{MESSAGES[10]}: #{count}" if count
+    ds << "#{MESSAGES[12]}: #{min_length}" if min_length
+    ds << "#{MESSAGES[13]}: #{max_length}" if max_length
+    ds << "#{MESSAGES[20]}" if direct_child_only?
+    ds << "#{MESSAGES[15]}" if must_not_be_empty?
+    ds << "#{MESSAGES[14]}" if must_be_empty?
+    ds << "#{MESSAGES[16]} #{contains}" if must_have_content?
+    ds << "#{MESSAGES[17]} #{text.inspect}" if must_have_text?
+    ds << "#{MESSAGES[21]} #{attributes.inspect}" if must_have_attributes?
+    #
+    # On les répartit sur plusieurs lignes
+    # 
+    max_line = 70
+    lines = []
+    line  = []
+    while seg = ds.shift
+      curline = line.join(', ')
+      if curline.length + seg.length > max_line
+        lines << curline
+        line = []
+      end
+      line << seg
+    end
+    lines << line.join(', ') unless line.empty?
+    lines.join("\n")
   end
   
   # --- TESTS METHODS ---
