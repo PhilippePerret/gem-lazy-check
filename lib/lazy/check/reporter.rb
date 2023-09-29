@@ -20,7 +20,18 @@ class Checker
       puts "\n\n"
       puts "#{checker.name}".jaune
       puts "-"* checker.name.length
-      color = @failures.count > 0 ? :red : :vert
+      nombre_erreurs = @failures.count
+      if true #verbose? # TODO À RÉGLER
+        @successs.each do |checked|
+          puts checked.message.vert
+        end
+      end
+      if nombre_erreurs > 0
+        @failures.each do |checkedthing|
+          puts "#{checkedthing.error}".rouge
+        end
+      end
+      color = nombre_erreurs > 0 ? :red : :vert
       msg = "Success #{@successs.count} Failures #{@failures.count} Temps #{formated_duree}"
       puts "-" * msg.length
       puts msg.send(color)

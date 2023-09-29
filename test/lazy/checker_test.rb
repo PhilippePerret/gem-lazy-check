@@ -1,13 +1,6 @@
 require "test_helper"
 
 
-def recipe_path(relpath)
-  relpath = "#{relpath}.yaml" unless relpath.end_with?('.yaml')
-  File.join(TEST_FOLDER,'assets',relpath).tap do |p|
-    File.exist?(p) || raise("\n\nLa recette #{p} est introuvable !\nJe ne peux pas jouer ces tests.")
-  end
-end
-
 RECIPE_PATH_ICED = '/Users/philippeperret/Sites/Atelier_Icare/Icare_2023/icare_editions_dev/tests/recipe.yaml'
 RECIPE_SANS_NAME = recipe_path('recipe_sans_name')
 RECIPE_VALIDE    = recipe_path('recipe_valide')

@@ -22,6 +22,8 @@ Or install it yourself as:
 
 ### Pour un test simple
 
+Si on a juste du code XML-like à tester, on peut utiliser la méthode `Lazy::Checker.check`.
+
 ~~~ruby
 require 'lazy-check'
 
@@ -40,7 +42,7 @@ Lazy::Checker.check(code, check, **{return_result: true})
 # => Reporter
 ~~~
 
-Noter que dans ce cas-là, rien n'est écrit en console.
+> Noter que dans ce cas-là, rien n'est écrit en console.
 
 ## Pour un test avec recette
 
@@ -66,17 +68,29 @@ La recette (`recipe.yaml`) définit les vérifications qu'il faut effectuer.
 
 ~~~yaml
 ---
-url: https://path/to/page/to/examine.html
-checks:
-  - name: "Existence du DIV#content avec du texte"
-    tag: 'div#content'
-    empty: false
-  - name: "Existence du SPAN#range sans texte"
-    tag: 'span#range'
-    empty: true
+name: "Nom général de la recette"
+base: https://www.mon.domaine.net
+tests:
+  - name: "Le premier test"
+    url: "" # donc la base
+    checks:
+      - name: "Existence du DIV#content avec du texte"
+        tag: 'div#content'
+        empty: false
+      - name: "Existence du SPAN#range sans texte"
+        tag: 'span#range'
+        empty: true
+  
+  - name: "Une redirection"
+    url: "redirection.html"
+    redirect_to: "https://nouvelle.url.net"
+
+  - name: "Une page erronée"
+    url: "page_inexistante.html"
+    response: 404
 ~~~
 
-### Properties
+### Check Properties
 
 ~~~yaml
 tag:                  [String] Le sélector

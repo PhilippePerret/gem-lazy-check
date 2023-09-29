@@ -1,0 +1,8 @@
+---
+name:   "Test d'une réponse 404"
+base:   https://www.atelier-icare.net
+tests:
+  - name: "La page https://www.atelier-icare.net/page-inexistante.html n'existe pas"
+    url: "page-inexistante.html"
+    response: 404
+

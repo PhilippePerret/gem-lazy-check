@@ -225,6 +225,8 @@ class CheckedTag
 
   # -- Data Methods --
 
+  def name        ; data[:name]       end
+  alias :message :name
   def tag_name    ; @tag_name         end
   def id          ; @id               end
   def css         ; @css              end

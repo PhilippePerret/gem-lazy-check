@@ -25,10 +25,24 @@ class Test
   end
 
   # On procède à ce test qui doit réussir
-  # Ça consiste à boucler sur tous les :checks défini pour
-  # ce test dans la recette.
+  # Ça consiste à :
+  #   - si :checks est défini : boucler sur tous les :checks pour
+  #     ce test dans la recette.
+  #   - si :redirect_to est défini : vérifier qu'on obtient bien une
+  #     redirection.
+  #   - si :response est défini : vérifier que c'est bien la réponse
+  # 
   # Cf. checker_url.rb pour le détail
+  # 
   def check(**options)
+    if data.key?(:checks)
+      check_with_checks(**options)
+    else
+      check_autre(**options)
+    end
+  end
+
+  def check_with_checks(**options)
     data[:checks].each do |dcheck|
       check_case = CheckCase.new(urler, dcheck, checker.reporter)
       result = check_case.check
@@ -38,9 +52,15 @@ class Test
         # Failure
       else
         # Unknown result — Résultat inconnu
-
       end
     end
+  end
+
+  # Pour checker la redirection ou l'http response
+  def check_autre(**options)
+    # STDOUT.write "\n-> check_autre (data: #{data.inspect})".jaune
+    churl = CheckedUrl.new(data.merge(urler: urler, reporter: reporter))
+    churl.check(**options)
   end
 
   def urler
@@ -50,9 +70,13 @@ class Test
     end
   end
 
-
   def url
     @url ||= data[:url]
+  end
+
+  # raccourci
+  def reporter
+    checker.reporter
   end
 
   private
@@ -63,13 +87,21 @@ class Test
       data_keys   = data.keys.pretty_join
       data_class  = data.class.name
       # -- Tests de validité --
-      data.is_a?(Hash)            || raise(ERRORS[300] % {c: data_class})
-      data.key?(:url)             || raise(ERRORS[300] % {ks: data_keys})
+      data.is_a?(Hash)                    || raise(ERRORS[300] % {c: data_class})
+      data.key?(:url)                     || raise(ERRORS[300] % {ks: data_keys})
       err = check_url(data[:url])
-      err.nil?                    || raise(ERRORS[302] % {e: err, u: data[:url]})
-      data.key?(:name)            || raise(ERRORS[307] % {ks: data_keys})
-      data.key?(:checks)          || raise(ERRORS[308] % {ks: data_keys})
-      data[:checks].is_a?(Array)  || raise(ERRORS[309] % {c: data_class})
+      err.nil?                            || raise(ERRORS[302] % {e: err, u: data[:url]})
+      data.key?(:name)                    || raise(ERRORS[307] % {ks: data_keys})
+      if data.key?(:checks)
+        data[:checks].is_a?(Array)        || raise(ERRORS[309] % {c: data_class})
+      elsif data.key?(:redirect_to)
+        data[:redirect_to].is_a?(String)  || raise(ERRORS[310] % {a: data[:redirect_to].inspect, c: data[:redirect_to].class.name})
+        data[:redirect_to].start_with?('http')  || raise(ERRORS[311] % {a: data[:redirect_to].inspect})
+      elsif data.key?(:response)
+        data[:response].is_a?(Integer)    || raise(ERRORS[312] % {a:data[:response].inspect, c: data[:response].class.name})
+      else
+        raise(ERRORS[308] % {ks: data_keys})
+      end
     end
 
     # S'assure que +url+ est une url valide. @return nil si c'est le

@@ -1,0 +1,8 @@
+---
+name: Test d'une redirection sur l'atelier Icare
+base: https://www.atelier-icare.net
+tests:
+  - name: "La page mon_profil.html redirige vers mon profil"
+    url: "mon_profil.html"
+    redirect_to: 'https://www.philippeperret.fr'
+

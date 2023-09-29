@@ -17,6 +17,7 @@
   La recette doit définir son nom avec la clé :name.
 
 # -- Erreurs de la définition d'un test --
+
 300: |
   Les données du test devraient être une table Hash, pas un %{c}.
 301: |
@@ -41,6 +42,14 @@
 309: |
   Les checks à faire pour le test (:checks) devraient être une liste
   Array, par un %{c}.
+310: |
+  La redirection %{a} devrait être une chaine de caractères, pas un %{c}.
+311: |
+  La redirection %{a} devrait commencer par 'http[s]'…
+312: |
+  Pour tester la réponse HTTP, il faut donner le nombre attendu, donc il
+  faut donner un Integer, or %{a} est un %{c}. 
+  Par exemple : 404.
 800: |
   -- INUTILISÉ --
 1000: |
@@ -95,6 +104,19 @@
 5031: |
   attributs manquants ou inégaux : %{e}.
 
+5500: |
+  L'URL n'est pas redirigée. Elle aurait dû être redirigée vers
+  %{e}
+5501: |
+  L'URL est redirigée vers la mauvaise adresse. Elle aurait dû être redirigée
+  vers : %{e}
+  Elle est redirigée vers : %{a}.
+5502: |
+  L'HTTP Response attendue n'est pas la bonne…
+  On attendait la réponse : %{e}
+  On a reçu la réponse    : %{a} 
+5503: |
+  Erreur 404. La page %{e} est introuvable.
 6000: |
   Le premier argument de Lazy::Checker.check doit être du code XML valide.
   Or, %{se}.
@@ -110,3 +132,4 @@
   donc un Hash contenant les bonnes clés : %{se}
 6011: |
   %{a} n'est pas un Hash, c'est un %{c}…
+
