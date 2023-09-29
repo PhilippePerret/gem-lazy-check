@@ -8,6 +8,7 @@ Add this line to your application's Gemfile:
 
 ```ruby
 gem 'lazy-check'
+gem 'lazy/check'
 ```
 
 And then execute:
@@ -25,7 +26,8 @@ Or install it yourself as:
 Si on a juste du code XML-like à tester, on peut utiliser la méthode `Lazy::Checker.check`.
 
 ~~~ruby
-require 'lazy-check'
+gem 'lazy-check'
+require 'lazy/check'
 
 code = "<root><div class="contient">du texte</div></root>"
 check = {tag: 'div.contient', text: "du texte"}
