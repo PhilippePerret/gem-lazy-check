@@ -1,0 +1,23 @@
+# Test grandeur nature qui permet d'utiliser des pages en
+# réel sur l'atelier Icare, dans le dossier tests/lazy_checker
+#
+---
+name: "Tests avec des pages cachées de l'atelier Icare"
+base: 'https://www.atelier-icare.net/tests/lazy_checker'
+tests:
+  - name: "La page 'base.html' doit exister"
+    url:  'base.html'
+    response: 200
+  - name: "La page 'base.html' contient les éléments de base"
+    url:  'base.html'
+    checks:
+      - tag: 'header'
+        count: 1
+      # On fait exprès de mettre des tests successifs (ce test-là
+      # pourrait aller ci-dessus)
+      - tag: 'header'
+        min_length: 1000
+      - tag: 'footer'
+        count: 1
+      - tag: 'section#body'
+        count: 1

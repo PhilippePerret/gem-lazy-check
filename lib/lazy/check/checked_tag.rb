@@ -13,11 +13,21 @@ class CheckedTag
     @data = data
     parse_tag
     check_data
+    @error = nil
   end
 
   # @return les erreurs rencontrées
   def errors
-    @errors.join("\n") + "Sous-erreurs : #{@sub_errors.join("\n")}"
+    err = []
+    # err << "Erreur avec #{data.inspect}" # Pour obtenir précisément les données
+    err << @error.strip unless @error.nil?
+    err << @errors.join("\n") unless @errors.empty?
+    err << @sub_errors.join("\n") unless @sub_errors.empty?
+    return err.join("\n")
+  end
+
+  def message
+    MESSAGES[4999] % {tag: tag}
   end
   
   # --- TESTS METHODS ---
@@ -53,10 +63,13 @@ class CheckedTag
       # <= L'élément envoyé est un document Nokogiri
       #    Nokogiri::HTML4/5::Document
       # 
-      founds = noko.css("//#{data[:tag]}")
-
-      # puts "founds (#{data[:tag]}) : #{founds.inspect}".jaune
-
+      if direct_child_only?
+        noko.children.first.children.each do |child|
+          founds << child if tagname_id_class_ok?(child)
+        end
+      else       
+        founds = noko.css("//#{data[:tag]}")
+      end
     elsif direct_child_only?
       #
       # Si on ne doit pas traverser toutes les générations d'éléments
@@ -93,6 +106,7 @@ class CheckedTag
         check_emptiness_of(found)
         check_containess_of(found)
         check_attributes_of(found)
+        check_lengths_of(found)
         # S'il n'a pas raisé jusque-là, c'est qu'il est bon
         true
       rescue CheckCaseError => e
@@ -187,6 +201,22 @@ class CheckedTag
     end
   end
 
+  # --
+  # -- Vérifie la longueur du contenu si :max_length ou 
+  # -- :min_length ont été définis
+  # --
+  def check_lengths_of(found)
+    if must_have_lengths?
+      len = found.length.freeze
+      if min_length && len < min_length
+        _raise(5032, min_length, len)
+      end
+      if max_length && len > max_length
+        _raise(5033, max_length, len)
+      end
+    end
+  end
+
   # @return true si les +child_css+ contiennent toutes les +css+
   # 
   def child_has_css?(child_css, csss)
@@ -199,7 +229,7 @@ class CheckedTag
   # -- Predicate Methods --
 
   def direct_child_only?
-    :TRUE == @directchild ||= true_or_false(data[:direct_child_only] === true)    
+    :TRUE == @directchild ||= true_or_false((data[:direct_child_only]||data[:direct_child]) === true)    
   end
   def must_have_text?
     :TRUE == @mhtxt ||= true_or_false(notext === false || not(text.nil?))
@@ -222,11 +252,13 @@ class CheckedTag
   def must_have_attributes?
     :TRUE == @mhattrs ||= true_or_false(not(attributes.nil?))
   end
+  def must_have_lengths?
+    :TRUE == @mhlens ||= true_or_false(not(min_length.nil? && max_length.nil?))
+  end
 
   # -- Data Methods --
 
   def name        ; data[:name]       end
-  alias :message :name
   def tag_name    ; @tag_name         end
   def id          ; @id               end
   def css         ; @css              end
@@ -236,13 +268,15 @@ class CheckedTag
   def empty       ; data[:empty]      end
   def notext      ; data[:notext]     end
   def contains    ; data[:contains]   end
+  def max_length  ; data[:max_length] end
+  def min_length  ; data[:min_length] end
   def attributes  ; data[:attrs]      end
 
   private
 
     def _raise(errno, expected = nil, actual = nil, property = nil)
       derror = {tag: tag, e: expected, a:actual}
-      raise CheckCaseError.new(ERRORS[errno] % derror)
+      raise CheckCaseError.new(ERRORS[errno].strip % derror)
     end
 
     # Méthode qui décompose la donnée :tag pour en tirer le nom
@@ -260,7 +294,7 @@ class CheckedTag
     REG_TAG = /^(?<tag_name>[a-z_\-]+)(\#(?<tag_id>[a-z0-9_\-]+))?(\.(?<tag_classes>[a-z0-9_\-\.]+))?$/.freeze
 
     def check_data
-      id || css || raise(ArgumentError.new(ERRORS[1003] % {a: tag}))
+      # id || css || raise(ArgumentError.new(ERRORS[1003] % {a: tag}))
       if count
         count.is_a?(Integer) || raise(ArgumentError.new(ERRORS[1004] % {a: count.inspect, c: count.class.name}))
       end 

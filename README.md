@@ -95,11 +95,46 @@ tests:
 ~~~yaml
 tag:                  [String] Le sélector
 count:             [Integer] Nombre attendu d'éléments
-empty:            [Bool] Si doit être vide ou non vide
-direct_child_only:   [Bool] Si doit être un enfant direct
+empty:            [Bool] Si true, doit être vide ou non vide
+direct_child:   [Bool] Si true, doit être un enfant direct
 text:                 [String] Le texte qui doit être contenu
 contains:       [String|Array] Ce que doit contenir la page
+min_length: 		[Integer] La longueur minimum du contenu (text seulement)
+max_length: 		[Integer] La longueur maximum du contenu (text seulement)
 ~~~
+
+## Exemples
+
+Simplement vérifier qu’une page réponde correctement :
+
+~~~yaml
+# recipe.yaml
+---
+name: "La page existe"
+base: 'https://monsite.net'
+tests: 
+	- name: "La page index.html existe et répond correctement"
+		url:  'index.html'
+		response: 200
+~~~
+
+Vérifier qu’une page contient les éléments de base
+
+~~~yaml
+# recipe.yaml
+---
+name: "Check simple de l'existence des éléments de base"
+base: 'https://monsite.net'
+tests: 
+	- name: "La page base.html contient les éléments de base"
+		url:  'index.html'
+		checks:
+			- tag: 'header'
+			- tag: 'section#body'
+			- tag: 'footer'
+~~~
+
+
 
 ## Development
 

@@ -113,6 +113,7 @@ module Nokogiri
     def attributes?(attrs)
       miss_attrs = []
       attrs.each do |attr_name, attr_value|
+        attr_name = attr_name.to_s
         if self.key?(attr_name) 
           # L'attribut existe
           if self.attr(attr_name) == attr_value
@@ -132,6 +133,11 @@ module Nokogiri
 
     def id
       @id ||= self['id']
+    end
+
+    # @return [Integer] La longueur du texte
+    def length
+      @length ||= text.length
     end
   end #/class XML::Element
 end #/module Nokogiri

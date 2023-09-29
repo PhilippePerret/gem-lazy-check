@@ -22,14 +22,10 @@ class Checker
       puts "-"* checker.name.length
       nombre_erreurs = @failures.count
       if true #verbose? # TODO À RÉGLER
-        @successs.each do |checked|
-          puts checked.message.vert
-        end
+        display_list_resultats(success = true)
       end
       if nombre_erreurs > 0
-        @failures.each do |checkedthing|
-          puts "#{checkedthing.error}".rouge
-        end
+        display_list_resultats(success = false)
       end
       color = nombre_erreurs > 0 ? :red : :vert
       msg = "Success #{@successs.count} Failures #{@failures.count} Temps #{formated_duree}"
@@ -42,6 +38,22 @@ class Checker
     end
     def add_failure(check_case)
       @failures << check_case
+    end
+
+    # Pour afficher la liste de succès ou de failures
+    def display_list_resultats(success)
+      methode = success ? :message   : :errors
+      color   = success ? :vert      : :red
+      liste   = success ? @successs  : @failures
+      prefix  = success ? 'SUCCESS'  : 'FAILURE'
+
+      max_index = liste.count + 1
+      max_len_index = "[#{prefix} #{max_index}] ".length
+      indent = ' ' * max_len_index
+      liste.each_with_index do |checkedthing, idx|
+        index_str = "[#{prefix} #{idx + 1}]".ljust(max_len_index)
+        puts "#{index_str}#{checkedthing.send(methode).split("\n").join("\n#{indent}")}".send(color)
+      end
     end
 
     def start

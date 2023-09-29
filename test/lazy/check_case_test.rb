@@ -213,10 +213,10 @@ class Lazy::CheckCaseTest < Minitest::Test
     code = '<div class="contient"><div class="in"><div class="in"></div></div></div>'
     dcase = {tag:'div.contient', contains:{tag:'div.in', count:2}}
     should_succeed(code, dcase, __LINE__)
-    # L'affirmation précédente est vrai SAUF si :direct_child_only
+    # L'affirmation précédente est vrai SAUF si :direct_child
     # est à true
     code = '<div class="contient"><div class="in"><div class="in"></div></div></div>'
-    dcase = {tag:'div.contient', contains:{tag:'div.in', count:2, direct_child_only: true}}
+    dcase = {tag:'div.contient', contains:{tag:'div.in', count:2, direct_child: true}}
     should_fail(code, dcase, __LINE__)
   end
 

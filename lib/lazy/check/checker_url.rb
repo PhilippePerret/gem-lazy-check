@@ -12,12 +12,12 @@ class Url
   # @param uri [String] URL ou code
   # 
   def initialize(uri)
-    @uri_string = uri
+    @uri_string = uri.strip
   end
 
   # @return Nokogiri Document
   def nokogiri
-    @nokogiri ||= Nokogiri::XML(code_html)
+    @nokogiri ||= Nokogiri::XML(code_html)#.tap { |n| dbg("Classe : #{n.class}".bleu)}
   end
 
   # -- Predicate Methods --
@@ -56,13 +56,6 @@ class Url
       uri = URI(uri_string)
       begin
         response = Net::HTTP.get_response(uri)
-        # STDOUT.write  "\nresponse.class = #{response.class}".jaune
-        # STDOUT.write  "\nresponse = #{response.inspect}".jaune
-        # STDOUT.write  "\nresponse.methods = #{response.methods}".jaune
-        # STDOUT.write  "\nresponse.uri = #{response.uri.inspect}".jaune
-        # STDOUT.write  "\nresponse.value = #{response.value.inspect}".jaune
-        # STDOUT.write  "\nresponse.code_type = #{response.code_type.inspect}".jaune
-        # STDOUT.write  "\nresponse.body = #{response.body.inspect}".jaune
       rescue SocketError => e
         @rvalue = e.message.match(/([4][0-9][0-9])/).to_a[1].to_i
         return
@@ -87,6 +80,9 @@ class Url
       case response
       when Net::HTTPSuccess
         body = response.body # toute la page html
+        @rvalue = response.code.to_i
+        # dbg("response.value = #{response.methods.inspect}".bleu)
+        # dbg("response.code = #{response.code.inspect}".bleu)
         if body.match?(REG_REDIRECTION)
           #
           # -- la page html définit une redirection par

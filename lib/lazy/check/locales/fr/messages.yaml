@@ -1,0 +1,6 @@
+---
+
+# -- Les messages de retour des checks --
+
+4999: |
+  La balise %{tag} a été trouvée avec les données attendues.

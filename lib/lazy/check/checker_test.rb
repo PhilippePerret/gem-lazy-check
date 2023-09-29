@@ -58,7 +58,6 @@ class Test
 
   # Pour checker la redirection ou l'http response
   def check_autre(**options)
-    # STDOUT.write "\n-> check_autre (data: #{data.inspect})".jaune
     churl = CheckedUrl.new(data.merge(urler: urler, reporter: reporter))
     churl.check(**options)
   end

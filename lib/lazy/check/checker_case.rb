@@ -48,10 +48,12 @@ class CheckCase
   def check
     ctag = CheckedTag.new(data)
     if ctag.is_in?(noko)
-      reporter.add_success(self) if reporter
+      # reporter.add_success(self) if reporter
+      reporter.add_success(ctag) if reporter
       return true
     else
-      reporter.add_failure(self) if reporter
+      # reporter.add_failure(self) if reporter
+      reporter.add_failure(ctag) if reporter
       return false
     end
   end
