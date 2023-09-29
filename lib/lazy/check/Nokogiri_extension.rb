@@ -89,7 +89,8 @@ module Nokogiri
       if text.include?(searched)
         return true
       else
-        @errors << (ERRORS[5020] % {e: searched})
+        @errors ||= []
+        @errors << (Lazy::ERRORS[5020] % {e: searched})
         return false
       end
     end

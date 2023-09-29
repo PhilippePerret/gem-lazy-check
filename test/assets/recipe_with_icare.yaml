@@ -13,11 +13,11 @@ tests:
     checks:
       - tag: 'header'
         count: 1
-      # On fait exprès de mettre des tests successifs (ce test-là
-      # pourrait aller ci-dessus)
-      - tag: 'header'
         min_length: 50
       - tag: 'footer'
         count: 1
-      - tag: 'section#body'
+        max_length: 50
+      - tag: 'section#body.home'
         count: 1
+        attrs: {data: 'in'}
+        text:  'Page d’accueil d’un faux atelier Icare pour test de Lazy::Checker.'
