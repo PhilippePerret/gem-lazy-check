@@ -17,6 +17,7 @@ class Checker
     # Affichage du rapport
     # 
     def display
+      clear unless debug?
       puts "\n\n"
       puts "#{checker.name}".jaune
       puts "-"* checker.name.length
@@ -57,6 +58,10 @@ class Checker
     end
 
     def start
+      clear unless debug?
+      puts "\n\n"
+      puts "#{checker.name}".jaune
+      puts "Merci de patienter…".bleu
       @start_time = Time.now
       @successs = []
       @failures = []
