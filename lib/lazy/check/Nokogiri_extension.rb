@@ -67,7 +67,7 @@ module Nokogiri
           contains_as_tag?(required)
         else
           # Erreur d'implémentation, je dois m'arrêter
-          raise CheckCaseError.new(ERRORS[2000] % {c: required.class.name})
+          raise CheckCaseError.new(Lazy::ERRORS[2000] % {c: required.class.name})
         end
       end
 
@@ -89,8 +89,7 @@ module Nokogiri
       if text.include?(searched)
         return true
       else
-        @errors ||= []
-        @errors << (Lazy::ERRORS[5020] % {e: searched})
+        add_error(Lazy::ERRORS[5020] % {e: searched})
         return false
       end
     end
@@ -104,7 +103,7 @@ module Nokogiri
       if ctag.is_in?(self)
         return true
       else
-        @errors << (ERRORS[5021] % {e: dtag.inspect})
+        add_error(Lazy::ERRORS[5021] % {e: dtag.inspect})
         return false
       end
     end
@@ -131,6 +130,10 @@ module Nokogiri
       return miss_attrs
     end
 
+    def add_error(err)
+      @errors ||= []
+      @errors << err
+    end
 
     def id
       @id ||= self['id']
