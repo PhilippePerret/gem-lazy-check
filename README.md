@@ -37,98 +37,100 @@ Lazy::Checker.check(code, check)
 #       Success 1 Failures 0 Duration ...
 ~~~
 
-On peut aussi obtenir les résultats en retour de méthode (c'est un `Lazy::Checker::Reporter`)
+You can also obtain the results in method return (this is a `Lazy::Checker::Reporter`).
 
 ~~~ruby
 Lazy::Checker.check(code, check, **{return_result: true})
 # => Reporter
 ~~~
 
-> Noter que dans ce cas-là, rien n'est écrit en console.
+> Note that in this case, nothing is written in the console.
 
-## Pour un test avec recette
+## For a test with a recipe
 
-Une « recette » est un fichier `YAML` qui définit l'url d'une page internet, ainsi que les checks à effectuer dessus. Cf. ci-dessous.
+A "recipe" is a `YAML` file that defines the url of a web page, and the checks to be performed on it. See below.
 
 ~~~ruby
-require "lazy-check"
+require "lazy/check"
 
 checker = Lazy::Checker.new("path/to/recipe.yaml")
 checker.check
-# => Produit le résultat
+# => Produces the result
 ~~~
 
-Si la recette se trouve là où le terminal se trouve, il suffit de faire :
+If the recipe is located where the terminal is, simply do:
 
 ~~~ruby
-require "lazy-check"
+require "lazy/check"
 
 Lazy::Checker.new.check
 ~~~
 
-La recette (`recipe.yaml`) définit les vérifications qu'il faut effectuer.
+The recipe (`recipe.yaml`) defines the checks to be performed.
 
 ~~~yaml
 ---
-name: "Nom général de la recette"
-base: https://www.mon.domaine.net
+name: "Name for this recipe"
+base: https://www.my.domain.net
 tests:
-  - name: "Le premier test"
-    url: "" # donc la base
+  - name: "My first test"
+    url: "" # so the base
     checks:
-      - name: "Existence du DIV#content avec du texte"
+      - name: "Existence of DIV#content with text"
         tag: 'div#content'
         empty: false
-      - name: "Existence du SPAN#range sans texte"
+      - name: "Existence of SPAN#range without text"
         tag: 'span#range'
         empty: true
   
-  - name: "Une redirection"
-    url: "redirection.html"
-    redirect_to: "https://nouvelle.url.net"
+      - name: "A redirection"
+        url: "redirection.html"
+        redirect_to: "https://new.url.net"
 
-  - name: "Une page erronée"
-    url: "page_inexistante.html"
-    response: 404
+      - name: "A wrong page"
+        url: "page_unfound.html"
+        response: 404
 ~~~
 
 ### Check Properties
 
+The above "checks" can define the following properties:
+
 ~~~yaml
-tag:                  [String] Le sélector
-count:             [Integer] Nombre attendu d'éléments
-empty:            [Bool] Si true, doit être vide ou non vide
-direct_child:   [Bool] Si true, doit être un enfant direct
-text:                 [String] Le texte qui doit être contenu
-contains:       [String|Array] Ce que doit contenir la page
-min_length: 		[Integer] La longueur minimum du contenu (text seulement)
-max_length: 		[Integer] La longueur maximum du contenu (text seulement)
+tag:                  [String] The selector
+count:             [Integer] Expected number of elements
+empty:            [Bool] If true, must be empty, if false, must be non-empty
+direct_child:   [Bool] If true, must be a direct child
+text:                 [String] The text that must be contained
+contains:       [String|Array] What the page should contain
+min_length: 		[Integer] Minimum content length (text only)
+max_length: 		[Integer] Maximum content length (text only)
 ~~~
 
-## Exemples
+## Examples
 
-Simplement vérifier qu’une page réponde correctement :
+Simply check that a page responds correctly:
 
 ~~~yaml
 # recipe.yaml
 ---
-name: "La page existe"
-base: 'https://monsite.net'
+name: "Page exists"
+base: 'https://mywebsite.net'
 tests: 
-	- name: "La page index.html existe et répond correctement"
+	- name: "The index.html page exists and responds correctly"
 		url:  'index.html'
 		response: 200
 ~~~
 
-Vérifier qu’une page contient les éléments de base
+Check that a page contains the basic elements.
 
 ~~~yaml
 # recipe.yaml
 ---
-name: "Check simple de l'existence des éléments de base"
-base: 'https://monsite.net'
+name: "Simple check on the existence of basic elements"
+base: 'https://mywebsite.net'
 tests: 
-	- name: "La page base.html contient les éléments de base"
+	- name: "The index.html page contains the basic elements"
 		url:  'index.html'
 		checks:
 			- tag: 'header'
@@ -136,7 +138,13 @@ tests:
 			- tag: 'footer'
 ~~~
 
+## Tests
 
+Run the tests:
+
+~~~
+rake test
+~~~
 
 ## Development
 

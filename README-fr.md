@@ -37,7 +37,7 @@ Lazy::Checker.check(code, check)
 #       Succès 1 Failure 0 Temps ...
 ~~~
 
-On peut aussi obtenir les résultats en retour de méthode (c'est un `Lazy::Checker::Reporter`)
+On peut aussi obtenir les résultats en retour de méthode (c'est un `Lazy::Checker::Reporter`).
 
 ~~~ruby
 Lazy::Checker.check(code, check, **{return_result: true})
@@ -51,7 +51,7 @@ Lazy::Checker.check(code, check, **{return_result: true})
 Une « recette » est un fichier `YAML` qui définit l'url d'une page internet, ainsi que les checks à effectuer dessus. Cf. ci-dessous.
 
 ~~~ruby
-require "lazy-check"
+require "lazy/check"
 
 checker = Lazy::Checker.new("path/to/recipe.yaml")
 checker.check
@@ -61,7 +61,7 @@ checker.check
 Si la recette se trouve là où le terminal se trouve, il suffit de faire :
 
 ~~~ruby
-require "lazy-check"
+require "lazy/check"
 
 Lazy::Checker.new.check
 ~~~
@@ -83,21 +83,23 @@ tests:
         tag: 'span#range'
         empty: true
   
-  - name: "Une redirection"
-    url: "redirection.html"
-    redirect_to: "https://nouvelle.url.net"
+      - name: "Une redirection"
+        url: "redirection.html"
+        redirect_to: "https://nouvelle.url.net"
 
-  - name: "Une page erronée"
-    url: "page_inexistante.html"
-    response: 404
+      - name: "Une page erronée"
+        url: "page_inexistante.html"
+        response: 404
 ~~~
 
 ### Check Properties
 
+Les "checks" ci-dessus peuvent définir les propriétés suivantes :
+
 ~~~yaml
 tag:                  [String] Le sélector
 count:             [Integer] Nombre attendu d'éléments
-empty:            [Bool] Si true, doit être vide ou non vide
+empty:            [Bool] Si true, doit être vide, si false, non vide
 direct_child:   [Bool] Si true, doit être un enfant direct
 text:                 [String] Le texte qui doit être contenu
 contains:       [String|Array] Ce que doit contenir la page
@@ -120,7 +122,7 @@ tests:
 		response: 200
 ~~~
 
-Vérifier qu’une page contient les éléments de base
+Vérifier qu’une page contient les éléments de base :
 
 ~~~yaml
 # recipe.yaml
@@ -128,7 +130,7 @@ Vérifier qu’une page contient les éléments de base
 name: "Check simple de l'existence des éléments de base"
 base: 'https://monsite.net'
 tests: 
-	- name: "La page base.html contient les éléments de base"
+	- name: "La page index.html contient les éléments de base"
 		url:  'index.html'
 		checks:
 			- tag: 'header'
@@ -136,7 +138,13 @@ tests:
 			- tag: 'footer'
 ~~~
 
+## Tester le gem
 
+Lancer les tests avec :
+
+~~~
+rake test
+~~~
 
 ## Development
 
