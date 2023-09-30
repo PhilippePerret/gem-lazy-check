@@ -45,48 +45,46 @@ class Lazy::CheckCaseTest < Minitest::Test
 
   def test_check_case_require_good_parameters
     err = assert_raises(ArgumentError) { Lazy::Checker::CheckCase.new }
-    expected  = 'wrong number of arguments (given 0, expected 2)'
+    expected  = 'wrong number of arguments (given 0, expected 2..3)'
     actual    = err.message
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})
   
     err = assert_raises(ArgumentError) { Lazy::Checker::CheckCase.new(nil, nil) }
-    expected = (ERRORS[1000] % {a:nil, c:NilClass}).strip
+    expected = (Lazy::ERRORS[1000] % {a:nil, c:NilClass}).strip
     actual   = err.message.strip
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})
 
     err = assert_raises(ArgumentError) { Lazy::Checker::CheckCase.new(22, nil) }
-    expected = (ERRORS[1000] % {a:22, c:22.class.name}).strip
+    expected = (Lazy::ERRORS[1000] % {a:22, c:22.class.name}).strip
     actual   = err.message.strip
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})
 
     urler = Lazy::Checker::Url.new('https://google.com')
     err = assert_raises(ArgumentError) { Lazy::Checker::CheckCase.new(urler, nil) }
-    expected = (ERRORS[1001] % {a:nil, c:NilClass}).strip
+    expected = (Lazy::ERRORS[1001] % {a:nil, c:NilClass}).strip
     actual   = err.message.strip
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})
 
     urler = Lazy::Checker::Url.new('https://google.com')
     err = assert_raises(ArgumentError) { Lazy::Checker::CheckCase.new(urler, 12) }
-    expected = (ERRORS[1001] % {a:12, c:12.class.name}).strip
+    expected = (Lazy::ERRORS[1001] % {a:12, c:12.class.name}).strip
     actual   = err.message.strip
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})
 
     # -- Mauvaises data ---
 
     err = assert_raises(ArgumentError) { Lazy::Checker::CheckCase.new(urler, {empty: true})}
-    expected = (ERRORS[1002] % {ks:':' + {empty:true}.keys.join(', :')}).strip
+    expected = (Lazy::ERRORS[1002] % {ks:':' + {empty:true}.keys.join(', :')}).strip
     actual   = err.message.strip
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})    
 
     # Attention, à partir d'ici, c'est CheckedTag qu'on test (refactorisation required)
 
-    err = assert_raises(ArgumentError) { Lazy::Checker::CheckedTag.new({tag:'div', empty: true})}
-    expected = (ERRORS[1003] % {a: 'div'}).strip
-    actual   = err.message.strip
-    assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected.strip, a:actual.strip})
+    # Maintenant on peut mettre juste un div, sans id ou class
+    err = assert_silent { Lazy::Checker::CheckedTag.new({tag:'div', empty: true})}
     
     err = assert_raises(ArgumentError) { Lazy::Checker::CheckedTag.new({tag:'div.content', count: "Faux"})}
-    expected  = (ERRORS[1004] % {a: "Faux".inspect, c: "Faux".class.name}).strip
+    expected  = (Lazy::ERRORS[1004] % {a: "Faux".inspect, c: "Faux".class.name}).strip
     actual    = err.message.strip
     assert_equal(expected, actual, TEST_ERRORS[10] % {e: expected, a:actual})
   end

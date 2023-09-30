@@ -58,10 +58,12 @@ class Checker
     end
 
     def start
-      clear unless debug?
-      puts "\n\n"
-      puts "#{checker.name}".jaune
-      puts MESSAGES[:PleaseWait].bleu
+      unless checker.no_output?
+        clear unless debug?
+        puts "\n\n"
+        puts "#{checker.name}".jaune
+        puts MESSAGES[:PleaseWait].bleu
+      end
       @start_time = Time.now
       @successs = []
       @failures = []

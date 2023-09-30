@@ -1,7 +1,7 @@
 require "test_helper"
 
 
-RECIPE_PATH_ICED = '/Users/philippeperret/Sites/Atelier_Icare/Icare_2023/icare_editions_dev/tests/recipe.yaml'
+RECIPE_PATH_ICED = '/Users/philippeperret/Sites/Atelier_Icare/Icare_2023/icare_editions_dev/tests/recipe_lazy.yaml'
 RECIPE_SANS_NAME = recipe_path('recipe_sans_name')
 RECIPE_VALIDE    = recipe_path('recipe_valide')
 
@@ -36,7 +36,7 @@ class Lazy::CheckTest < Minitest::Test
 
   def test_site_editions_icare
     checker = Lazy::Checker.new(RECIPE_PATH_ICED)
-    assert_silent { checker.check(**{output: false}) }
+    assert_silent { checker.check(**{return_result: true}) }
   end
 
   # --- Validité de la recette ---

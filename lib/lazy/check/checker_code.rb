@@ -33,7 +33,6 @@ class Checker
       checker.check_against(@data_check, **options)
     end
 
-
     private
 
       # Méthode qui vérifie la conformité de la donnée
@@ -80,6 +79,8 @@ class Checker
     # de test)
     attr_reader :report
 
+    attr_reader :options
+
     def initialize(xml_code)
       @xml_code = xml_code
       @urler = Checker::Url.new(xml_code)
@@ -91,6 +92,7 @@ class Checker
     #   :return_result   Si true, on retourne les données au lieu de les afficher
     # 
     def check_against(data_check, **options)
+      @options = options
       @report = Reporter.new(self)
       @report.start
       check_case = Checker::CheckCase.new(urler, data_check, @report)
@@ -101,6 +103,14 @@ class Checker
       else
         report.display
       end
+    end
+
+    def name
+      MESSAGES[:CodeToTest]
+    end
+
+    def no_output?
+      options[:return_result] === true
     end
 
   end #/class Code

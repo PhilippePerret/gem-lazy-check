@@ -12,7 +12,8 @@ class Lazy::TestTest < Minitest::Test
   end
 
   def test_instance_test_repond_a_check
-    t = Lazy::Checker::Test.new({url:'<html></html>', name:"pour voir", checks:[]})
-    assert_respond_to t, :check
+    checker = Object.new
+    t = Lazy::Checker::Test.new(checker, {url:'<html></html>', name:"pour voir", checks:[]})
+    assert_respond_to( t, :check)
   end
 end

@@ -7,6 +7,8 @@ class Checker
 
   attr_reader :reporter
 
+  attr_reader :options
+
   def initialize(recipe_path = nil)
     recipe_path ||= File.expand_path('.', 'recipe.yaml')
     File.exist?(recipe_path) || raise(ERRORS[200] % {path: recipe_path})
@@ -24,6 +26,7 @@ class Checker
   # La méthode (silencieuse) qui produit le check
   # ("silencieuse" parce qu'elle ne produit que des raises)
   def proceed_check(**options)
+    @options = options
     @reporter = Reporter.new(self)
     @reporter.start
     recipe[:tests].collect do |dtest|
@@ -32,10 +35,10 @@ class Checker
       test.check(**options)
     end
     @reporter.end
-    if options[:return_result]
+    if no_output?
       return @reporter
     else
-      @reporter.display unless no_output?
+      @reporter.display
     end
   end
 
@@ -43,6 +46,10 @@ class Checker
 
   def base?
     not(base.nil?)
+  end
+
+  def no_output?
+    options[:return_result] === true
   end
 
   def recipe_valid?
@@ -53,10 +60,6 @@ class Checker
     end
     recipe.key?(:tests)         || raise(RecipeError, ERRORS[204] % {ks: recipe.keys.pretty_inspect})
     recipe[:tests].is_a?(Array) || raise(RecipeError, ERRORS[205] % {c: recipe[:tests].class.name})
-  end
-
-  def no_output?
-    @options[:output] === false
   end
 
   # --- Données ---

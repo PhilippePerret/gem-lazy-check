@@ -15,6 +15,7 @@ Success: 'Succès'
 Failures: 'Échecs'
 Duration: 'Durée'
 PleaseWait: 'Merci de patienter…'
+CodeToTest: 'Code à tester'
 
 # -- Les messages de retour des checks --
 

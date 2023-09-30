@@ -31,23 +31,23 @@ class Lazy::CheckerCodeTest < Minitest::Test
     assert_match("wrong number of arguments (given 0, expected 2)", err.message)
 
     err = assert_raises(ArgumentError) { Lazy::Checker.check(nil, {}) }
-    assert_equal(ERRORS[6000] % {se: ERRORS[6003]}, err.message)
+    assert_equal(Lazy::ERRORS[6000] % {se: Lazy::ERRORS[6003]}, err.message)
 
     err = assert_raises(ArgumentError) { Lazy::Checker.check(12, {}) }
-    assert_equal(ERRORS[6000] % {se: ERRORS[6001] % {c:12.class.name, a: 12.inspect}}, err.message)
+    assert_equal(Lazy::ERRORS[6000] % {se: Lazy::ERRORS[6001] % {c:12.class.name, a: 12.inspect}}, err.message)
   
     code = '<root1></root1><root2></root2>'
     err = assert_raises(ArgumentError) { Lazy::Checker.check(code, {}) }
-    assert_equal(ERRORS[6000] % {se: ERRORS[6002] % {a: code.inspect}}, err.message)
+    assert_equal(Lazy::ERRORS[6000] % {se: Lazy::ERRORS[6002] % {a: code.inspect}}, err.message)
 
     good_code = '<root><div class="content"></div></root>'
     [
-      [ nil,  {se: ERRORS[6003]} ],
-      [ 12,   {se: ERRORS[6011] % {c: 12.class.name, a: 12.inspect}} ],
-      [ {bad:true}, {se:ERRORS[1002] % {ks: [:bad].pretty_join}}],
+      [ nil,  {se: Lazy::ERRORS[6003]} ],
+      [ 12,   {se: Lazy::ERRORS[6011] % {c: 12.class.name, a: 12.inspect}} ],
+      [ {bad:true}, {se:Lazy::ERRORS[1002] % {ks: [:bad].pretty_join}}],
     ].each do |bad_check, expected|
       err = assert_raises(ArgumentError) { Lazy::Checker.check(good_code, bad_check)}
-      assert_equal(ERRORS[6010] % expected, err.message)
+      assert_equal(Lazy::ERRORS[6010] % expected, err.message)
     end
 
 

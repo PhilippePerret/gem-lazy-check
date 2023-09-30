@@ -16,7 +16,7 @@ module Nokogiri
 
     # @return true si le node est vraiment vide
     def empty?
-      not(children?) && content.empty?
+      not(children?) && content.strip.empty?
     end
 
     def children?
@@ -24,11 +24,11 @@ module Nokogiri
     end
 
     def has_text?
-      not(text.empty?)
+      not(text.strip.empty?)
     end
 
     def has_no_text?
-      text.empty?
+      text.strip.empty?
     end
 
     # Test du contenu
@@ -141,7 +141,7 @@ module Nokogiri
 
     # @return [Integer] La longueur du texte
     def length
-      @length ||= text.length
+      @length ||= text.strip.length
     end
   end #/class XML::Element
 end #/module Nokogiri
