@@ -3,11 +3,11 @@ require_relative 'lib/lazy/check/version'
 Gem::Specification.new do |s|
   s.name          = "lazy-check"
   s.version       = Lazy::Check::VERSION
-  s.authors       = ["PhilippePerret"]
+  s.authors       = ["Philippe Perret"]
   s.email         = ["philippe.perret@yahoo.fr"]
 
-  s.summary       = %q{Vérification paresseuse d'un site web}
-  s.description   = %q{Ce gem permet de façon paresseuse mais néanmoins sérieuse de tester qu'un site web est valide au niveau de ses pages et de son contenu.}
+  s.summary       = %q{Check lazilly your web site pages}
+  s.description   = %q{This gem is a lazy but serious way of testing that a website is valid in terms of its pages and content.}
   s.homepage      = "https://rubygems.org/gems/lazy-check"
   s.required_ruby_version = Gem::Requirement.new(">= 2.3.0")
 

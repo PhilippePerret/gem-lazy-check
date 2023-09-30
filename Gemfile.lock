@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lazy-check (0.1.0)
+    lazy-check (1.2.1)
       clir
       nokogiri
 
