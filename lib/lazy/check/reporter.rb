@@ -29,7 +29,7 @@ class Checker
         display_list_resultats(success = false)
       end
       color = nombre_erreurs > 0 ? :red : :vert
-      msg = "Success #{@successs.count} Failures #{@failures.count} Temps #{formated_duree}"
+      msg = "#{MESSAGES[:Success]} #{@successs.count} #{MESSAGES[:Failures]} #{@failures.count} #{MESSAGES[:Duration]} #{formated_duree}"
       puts "-" * msg.length
       puts msg.send(color)
     end
@@ -46,7 +46,7 @@ class Checker
       methode = success ? :message   : :errors
       color   = success ? :vert      : :red
       liste   = success ? @successs  : @failures
-      prefix  = success ? 'SUCCESS'  : 'FAILURE'
+      prefix  = success ? '👍'  : '👎'
 
       max_index = liste.count + 1
       max_len_index = "[#{prefix} #{max_index}] ".length
@@ -61,7 +61,7 @@ class Checker
       clear unless debug?
       puts "\n\n"
       puts "#{checker.name}".jaune
-      puts "Merci de patienter…".bleu
+      puts MESSAGES[:PleaseWait].bleu
       @start_time = Time.now
       @successs = []
       @failures = []

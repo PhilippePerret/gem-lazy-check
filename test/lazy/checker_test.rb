@@ -70,7 +70,7 @@ class Lazy::CheckTest < Minitest::Test
     out, err = capture_io { checker.check }
     # puts "out : #{out}".bleu
     assert_empty(err)
-    assert_match('Success 2 Failures 0', out)
+    assert_match('Succès 2 Échecs 0', out)
   end
 
 end

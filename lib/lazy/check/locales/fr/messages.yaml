@@ -11,6 +11,11 @@
 20: 'seulement parmi les enfants directs'
 21: 'avec les attributs'
 
+Success: 'Succès'
+Failures: 'Échecs'
+Duration: 'Durée'
+PleaseWait: 'Merci de patienter…'
+
 # -- Les messages de retour des checks --
 
 4999: |

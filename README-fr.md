@@ -1,6 +1,6 @@
 # Lazy::Check
 
-This gem allows you to lazily test a website.
+Ce gem permet de tester de façon paresseuse un site web.
 
 ## Installation
 
@@ -21,20 +21,20 @@ Or install it yourself as:
 
 ## Usage
 
-### For a simple test (without a recipe)
+### Pour un test simple (sans recette)
 
-If you only have XML-like code to test, you can use the `Lazy::Checker#check` method.
+Si on a juste du code XML-like à tester, on peut utiliser la méthode `Lazy::Checker.check`.
 
 ~~~ruby
 gem 'lazy-check'
 require 'lazy/check'
 
-code = "<root><div class="contains">some text</div></root>"
-check = {tag: 'div.contains', text: "some text"}
+code = "<root><div class="contient">du texte</div></root>"
+check = {tag: 'div.contient', text: "du texte"}
 Lazy::Checker.check(code, check)
-# => Output:
+# => Écrit :
 #       -------------------------------------
-#       Success 1 Failures 0 Duration ...
+#       Succès 1 Failure 0 Temps ...
 ~~~
 
 On peut aussi obtenir les résultats en retour de méthode (c'est un `Lazy::Checker::Reporter`)

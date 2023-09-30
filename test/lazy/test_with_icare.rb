@@ -17,7 +17,7 @@ class Lazy::TestIcare < Minitest::Test
     out, err = capture_io { checker.check }
     puts "<<<<<<<<<<<<\n#{out}\n>>>>>>>>>>>>>>>>"
     assert_empty(err)
-    assert_match(/Failures 0/, out)
+    assert_match(/Échecs 0/, out)
 
   end
 

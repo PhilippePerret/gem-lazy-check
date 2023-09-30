@@ -27,14 +27,14 @@ class Lazy::UrlTest < Minitest::Test
   def test_redirection
     checker = Lazy::Checker.new(recipe_path('recipe_redirection'))
     out, _ = capture_io { checker.check }
-    assert_match('Success 1 Failures 0', out)
+    assert_match('Succès 1 Échecs 0', out)
     assert_match('La page mon_profil.html redirige vers mon profil', out)
   end
 
   def test_response
     checker = Lazy::Checker.new(recipe_path('recipe_response_404'))
     out, _ = capture_io { checker.check }
-    assert_match('Success 1 Failures 0', out)
+    assert_match('Succès 1 Échecs 0', out)
     assert_match('La page https://www.atelier-icare.net/page-inexistante.html n\'existe pas', out)
   end
 end
